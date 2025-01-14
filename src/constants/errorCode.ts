@@ -1,4 +1,4 @@
-export enum ErrorCode{
+ enum ErrorCode{
     NOT_FOUND = 404,
     ALREADY_EXISTS = 409,
     BAD_REQUEST = 400,
@@ -6,3 +6,6 @@ export enum ErrorCode{
     INTERNAL_EXCEPTION = 500,
     UNAUTHORIZED = 401,
 }
+
+
+export default ErrorCode;
