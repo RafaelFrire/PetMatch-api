@@ -4,11 +4,11 @@ import routes from "./routes";
 
 
 const app = express();
+const port = 3333;
 
 const route = Router();
 
 app.use(express.json());
-
 
 
 route.get('/', (req:Request, res:Response):any =>{
@@ -18,6 +18,9 @@ route.get('/', (req:Request, res:Response):any =>{
     })
 })
 
-// app.use("/", routes);
+app.use("/", routes);
 
-app.listen(3333, () => console.log("server is running"));
+app.listen(port, () => console.log(`server is running on port ${port}`));
+
+
+export default app;

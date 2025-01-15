@@ -1,1 +1,22 @@
-{"scripts":{"dev":"ts-node-dev --respawn --transpile-only src/server.ts","build":"tsc","start":"node dist/index.js","watch:build":"tsc --watch"},"dependencies":{"@prisma/client":"^6.2.1","bcrypt":"^5.1.1","express":"^4.21.2","jwt":"^0.2.0","multer":"^1.4.5-lts.1"},"devDependencies":{"@types/express":"^5.0.0","ts-node-dev":"^2.0.0","typescript":"^5.7.3","yup":"^1.6.1"}}
+{
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "watch:build": "tsc --watch"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.1",
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.2",
+    "jwt": "^0.2.0",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3",
+    "yup": "^1.6.1"
+  }
+}

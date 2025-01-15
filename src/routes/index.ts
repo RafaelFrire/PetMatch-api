@@ -1,6 +1,7 @@
-import { Router } from "express";
+import authRouter from "../modules/auth/auth.routes"
 
 
-export default{
-    
-}
+export default[
+    authRouter,
+
+]
