@@ -7,6 +7,8 @@ import { CreateUserInput, User } from "../../interfaces/User";
 import ErrorCode from "../../constants/errorCode";
 import { SuccessMessage } from "../../constants/sucessMessge";
 import { SuccessCode } from "../../constants/sucessCode";
+import { auth } from "../../config/auth";
+import jwt from "jsonwebtoken";
 
 class AuthController {
   authRepository: AuthRepository = new AuthRepository();
@@ -32,9 +34,22 @@ class AuthController {
         );
       }
 
+      const token = jwt.sign(
+        { id: findUser.id, email: findUser.email }, // Payload do token
+        auth.secret, // Chave secreta
+        { expiresIn: auth.expires } // Tempo de expiração do token
+      );
+
       return res.status(SuccessCode.LOGIN_SUCCESS).json({
         message: SuccessMessage.LOGIN_SUCCESS,
-        user: findUser,
+        user: {
+          name: findUser.name,
+          lastname: findUser.lastname,
+          email: findUser.email,
+          role: findUser.role,
+          status: findUser.status
+        },
+        token
       });
     } catch (err) {
       if (err instanceof ErrorResponse) {
