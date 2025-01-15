@@ -1,7 +1,7 @@
 enum StatusEnum {
-    ACTIVE,
-    INATIVE,
-    PENDING
+  ACTIVE = "ACTIVE",
+  INATIVE = "INATIVE",
+  PENDING = "PENDING",
 }
 
 export default StatusEnum;

@@ -11,6 +11,8 @@ export class ErrorResponse extends Error {
   }
 
   public sendResponse(res: Response) {
-    return res.status(this.statusCode).json({ errorMessage: this.message });
+    return res
+      .status(this.statusCode)
+      .json({ errorMessage: this.message, status: this.statusCode });
   }
 }

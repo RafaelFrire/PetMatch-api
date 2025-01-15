@@ -6,7 +6,11 @@ class AuthRepository {
     return prismaClient.user.findFirst({ where: { email } });
   }
   async createUser(data: User): Promise<User> {
-    return prismaClient.user.create({ data });
+    return prismaClient.user.create({
+      data:{
+        ...data
+      }
+    });
   }
 }
 

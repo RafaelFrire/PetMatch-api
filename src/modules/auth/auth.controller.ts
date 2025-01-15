@@ -1,9 +1,12 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { ErrorResponse } from "../../exceptions/errorResponse";
 import { ErrorMessage, ErrorMessageUser } from "../../constants/errorMessage";
 import AuthRepository from "../../repository/authRepository";
-import { decrypt } from "../../config/bcrypt";
-import { User } from "../../interfaces/User";
+import { decrypt, encode } from "../../config/bcrypt";
+import { CreateUserInput, User } from "../../interfaces/User";
+import ErrorCode from "../../constants/errorCode";
+import { SuccessMessage } from "../../constants/sucessMessge";
+import { SuccessCode } from "../../constants/sucessCode";
 
 class AuthController {
   authRepository: AuthRepository = new AuthRepository();
@@ -12,42 +15,79 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const findUser = await this.authRepository.findByEmail(email);
-    
+
       if (!findUser) {
-        throw new ErrorResponse(ErrorMessageUser.NOT_FOUND, 404);
+        throw new ErrorResponse(
+          ErrorMessageUser.NOT_FOUND,
+          ErrorCode.NOT_FOUND
+        );
       }
 
       const validatePassword = await decrypt(password, findUser.password);
 
-      if(!validatePassword){
-        throw new ErrorResponse(ErrorMessage.UNAUTHORIZED, 401);
+      if (!validatePassword) {
+        throw new ErrorResponse(
+          ErrorMessage.UNAUTHORIZED,
+          ErrorCode.UNAUTHORIZED
+        );
+      }
 
-      } 
-
-      console.log("retuurn", validatePassword)
-
-      return res.status(200).json({
-        message: "Usuário encontrado",
+      return res.status(SuccessCode.LOGIN_SUCCESS).json({
+        message: SuccessMessage.LOGIN_SUCCESS,
         user: findUser,
       });
     } catch (err) {
       if (err instanceof ErrorResponse) {
         return err.sendResponse(res);
       }
+      console.error(err);
       return res
         .status(500)
         .json({ errorMessage: ErrorMessage.INTERNAL_EXCEPTION });
     }
   }
   async signUp(req: Request, res: Response) {
-    try{
-        const data:User = req.body;
+    try {
+      const data: CreateUserInput = req.body;
+      const findUser = await this.authRepository.findByEmail(data.email);
 
-    }
-    catch (err){
+      console.log(data);
+      if (findUser !== null) {
+        throw new ErrorResponse(
+          ErrorMessageUser.ALREADY_EXISTS,
+          ErrorCode.ALREADY_EXISTS
+        );
+      } else {
+        const encondePassword = await encode(data.password);
 
+        if (typeof encondePassword === "string") {
+          const createUser = await this.authRepository.createUser({
+            ...data,
+            password: encondePassword,
+          });
+
+          return res.status(SuccessCode.USER_CREATED).json({
+            status: SuccessMessage.USER_CREATED,
+            message: SuccessMessage.USER_CREATED,
+            data: createUser,
+          });
+        } else {
+          throw new ErrorResponse(
+            ErrorMessage.BAD_REQUEST,
+            ErrorCode.BAD_REQUEST
+          );
+        }
+      }
+    } catch (err) {
+      if (err instanceof ErrorResponse) {
+        return err.sendResponse(res);
+      }
+      console.error(err);
+      return res
+        .status(500)
+        .json({ errorMessage: ErrorMessage.INTERNAL_EXCEPTION });
     }
-} 
+  }
 }
 
 export default AuthController;

@@ -1,6 +1,26 @@
 import RoleEnum from "../enums/RoleEnum";
 import StatusEnum from "../enums/StatusEnum";
 
+
+export interface CreateUserInput {
+  email: string;
+  password: string;
+  name: string;
+  id: string;
+  lastname: string | null;
+  role: RoleEnum;
+  createdAt: Date;
+  updatedAt: Date;
+  documentPath: string | null;
+  password_reset_token: string | null;
+  password_reset_experies: Date | null;  // Corrigido o nome para `password_reset_expires`
+  status: StatusEnum;
+  ong?: Ong;
+  adopter?: Adopter;
+}
+
+
+
 export interface User {
   id: string;
   email: string;
@@ -11,8 +31,8 @@ export interface User {
   createdAt: Date;
   updatedAt: Date;
   documentPath?: string;
-  password_reset_token?: string;
-  password_reset_expires?: Date;
+  password_reset_token: string | null;
+  password_reset_experies: Date | null;
   status: StatusEnum;
   ong?: Ong;
   adopter?: Adopter;

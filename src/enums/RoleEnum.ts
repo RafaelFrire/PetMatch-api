@@ -1,7 +1,8 @@
 enum RoleEnum {
-    ADMIN,
-    ADOPTER,
-    ONG
-}
-
-export default RoleEnum;
+    ADOPTER = "ADOPTER",
+    ONG = "ONG",
+    ADMIN = "ADMIN",
+  }
+  
+  export default RoleEnum;
+  
