@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import AuthController from "./auth.controller";
+import ValidateJwt from "../../middleware/ValidateToken";
 
 
 const router = Router();
