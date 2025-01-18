@@ -1,6 +1,7 @@
 import { Request, Response, Router } from "express";
 import AuthController from "./auth.controller";
 import ValidateJwt from "../../middleware/ValidateToken";
+import upload from "../../config/multerConfig";
 
 
 const router = Router();
@@ -12,7 +13,7 @@ router.post("/api/auth/signin", (req: Request, res: Response) => {
     authController.signIn(req, res);
 });
 
-router.post("/api/auth/signup", (req: Request, res: Response) => {
+router.post("/api/auth/signup", upload, (req: Request, res: Response) => {
     authController.signUp(req, res);
 });
 

@@ -11,6 +11,9 @@ const route = Router();
 app.use(express.json());
 
 
+app.use(express.urlencoded({extended: true}));
+
+
 route.get('/', (req:Request, res:Response):any =>{
     return res.status(200).json({
         message:"server is running",
