@@ -1,6 +1,7 @@
 import express from "express";
 import {Request, Response, Router } from "express";
 import routes from "./routes";
+import ensureUploadsDirectoryExists from "./utils/fileDirectory";
 
 
 const app = express();
@@ -8,9 +9,10 @@ const port = 3333;
 
 const route = Router();
 
+ensureUploadsDirectoryExists()
+
 app.use(express.json());
-
-
+app.use("/files", express.static("/uploads"));
 app.use(express.urlencoded({extended: true}));
 
 

@@ -61,7 +61,7 @@ class AuthController {
         .json({ errorMessage: ErrorMessage.INTERNAL_EXCEPTION });
     }
   }
-  async signUp(req: Request, res: Response) {
+  async signUp(req: Request, res: Response, filePath?: string) {
     try {
       const data: CreateUserInput = req.body;
       const findUser = await this.authRepository.findByEmail(data.email);
@@ -75,10 +75,11 @@ class AuthController {
       } else {
         const encondePassword = await encode(data.password);
 
-        if (typeof encondePassword === "string") {
+        if (typeof encondePassword === "string" && filePath) {
           const createUser = await this.authRepository.createUser({
             ...data,
             password: encondePassword,
+            documentPath: filePath,
           });
 
           return res.status(SuccessCode.USER_CREATED).json({
