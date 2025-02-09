@@ -9,6 +9,8 @@ import { SuccessMessage } from "../../constants/sucessMessge";
 import { SuccessCode } from "../../constants/sucessCode";
 import { auth } from "../../config/auth";
 import jwt from "jsonwebtoken";
+import StatusEnum from "../../enums/StatusEnum";
+import ExtractType from "../../utils/extractType";
 
 class AuthController {
   authRepository: AuthRepository = new AuthRepository();
@@ -17,6 +19,8 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const findUser = await this.authRepository.findByEmail(email);
+      console.log("email:", email)
+      console.log("password:", password)
 
       if (!findUser) {
         throw new ErrorResponse(
@@ -66,20 +70,27 @@ class AuthController {
       const data: CreateUserInput = req.body;
       const findUser = await this.authRepository.findByEmail(data.email);
 
-      console.log(data);
+      const filteredData = ExtractType(req.body, ["id","email", "name", "lastname","password", "status", "documentPath", "createdAt","updatedAt"]);
+
+
+      console.log("request: ", req.body);
+
       if (findUser !== null) {
         throw new ErrorResponse(
           ErrorMessageUser.ALREADY_EXISTS,
           ErrorCode.ALREADY_EXISTS
         );
       } else {
-        const encondePassword = await encode(data.password);
+        const encondePassword = await encode(filteredData.password);
 
         if (typeof encondePassword === "string" && filePath) {
           const createUser = await this.authRepository.createUser({
-            ...data,
+            ...filteredData,
             password: encondePassword,
-            documentPath: filePath,
+            status: StatusEnum.ACTIVE,
+            role: "ADOPTER",
+            password_reset_token: null,
+            password_reset_experies: null
           });
 
           return res.status(SuccessCode.USER_CREATED).json({

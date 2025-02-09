@@ -3,10 +3,10 @@ import StatusEnum from "../enums/StatusEnum";
 
 
 export interface CreateUserInput {
+  id: string;
   email: string;
   password: string;
   name: string;
-  id: string;
   lastname: string | null;
   role: RoleEnum;
   createdAt: Date;
