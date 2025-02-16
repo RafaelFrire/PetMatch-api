@@ -19,8 +19,8 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const findUser = await this.authRepository.findByEmail(email);
-      console.log("email:", email)
-      console.log("password:", password)
+
+      console.log("auth", req.body)
 
       if (!findUser) {
         throw new ErrorResponse(

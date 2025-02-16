@@ -45,10 +45,34 @@ model Ong {
   zipcode String
   state   String
   city    String
-
+  
   user   User   @relation("UserToOng", fields: [userId], references: [id])
   userId String @unique
+  articles Article[]
 }
+
+model Article {
+  id String @id @default(uuid())
+  title String
+  categorie String
+  thumbnail String
+  createdAt DateTime @default(now())  
+  updatedAt DateTime @updatedAt
+  ong Ong @relation(fields: [ongId], references: [id])
+  ongId String
+  sections   Section[]
+}
+
+model Section {
+  id        String @id @default(uuid())
+  articleId String
+  title     String  // Subtítulo
+  content   String  // Texto do subtítulo
+  quote String?
+  image String? 
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+}
+
 
 enum Role {
   ADMIN
