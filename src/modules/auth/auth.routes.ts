@@ -17,7 +17,15 @@ router.post("/api/auth/signup", upload, (req: Request, res: Response) => {
     const filePath = req.files || [];
     const files = req.files as Express.Multer.File[]; // Garantimos que é um array
 
-    authController.signUp(req, res, files[0].filename);
+    authController.signUp(req, res);
+});
+
+
+router.post("/api/auth/signup_ong", upload, (req: Request, res: Response) => {
+    const filePath = req.files || [];
+    const files = req.files as Express.Multer.File[]; // Garantimos que é um array
+
+    authController.signUpOng(req, res);
 });
 
 

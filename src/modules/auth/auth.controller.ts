@@ -11,6 +11,7 @@ import { auth } from "../../config/auth";
 import jwt from "jsonwebtoken";
 import StatusEnum from "../../enums/StatusEnum";
 import ExtractType from "../../utils/extractType";
+import RoleEnum from "../../enums/RoleEnum";
 
 class AuthController {
   authRepository: AuthRepository = new AuthRepository();
@@ -20,7 +21,7 @@ class AuthController {
       const { email, password } = req.body;
       const findUser = await this.authRepository.findByEmail(email);
 
-      console.log("auth", req.body)
+      console.log("auth", req.body);
 
       if (!findUser) {
         throw new ErrorResponse(
@@ -51,9 +52,9 @@ class AuthController {
           lastname: findUser.lastname,
           email: findUser.email,
           role: findUser.role,
-          status: findUser.status
+          status: findUser.status,
         },
-        token
+        token,
       });
     } catch (err) {
       if (err instanceof ErrorResponse) {
@@ -68,6 +69,76 @@ class AuthController {
   async signUp(req: Request, res: Response, filePath?: string) {
     try {
       const data: CreateUserInput = req.body;
+      const adopterData: AdotperDto = req.body.adopter as AdotperDto;
+      const findUser = await this.authRepository.findByEmail(data.email);
+
+      if(!data || !adopterData){
+        throw new ErrorResponse(
+          ErrorMessage.BAD_REQUEST,
+          ErrorCode.BAD_REQUEST
+        );
+      }
+
+
+      const filteredData = ExtractType(req.body, [
+        "id",
+        "email",
+        "name",
+        "lastname",
+        "password",
+        "status",
+        "documentPath",
+        "createdAt",
+        "updatedAt",
+      ]);
+
+      if (findUser !== null) {
+        throw new ErrorResponse(
+          ErrorMessageUser.ALREADY_EXISTS,
+          ErrorCode.ALREADY_EXISTS
+        );
+      } else {
+        const encondePassword = await encode(filteredData.password);
+
+        if (typeof encondePassword === "string") {
+          const createUser = await this.authRepository.createAdopter(
+            {
+              ...filteredData,
+              password: encondePassword,
+              status: StatusEnum.ACTIVE,
+              role: RoleEnum.ADOPTER,
+              password_reset_token: null,
+              password_reset_experies: null,
+            },
+            adopterData
+          );
+
+          return res.status(SuccessCode.USER_CREATED).json({
+            status: SuccessMessage.USER_CREATED,
+            message: SuccessMessage.USER_CREATED,
+            data: createUser,
+          });
+        } else {
+          throw new ErrorResponse(
+            ErrorMessage.BAD_REQUEST,
+            ErrorCode.BAD_REQUEST
+          );
+        }
+      }
+    } catch (err) {
+      if (err instanceof ErrorResponse) {
+        return err.sendResponse(res);
+      }
+      console.error(err);
+      return res
+        .status(500)
+        .json({ errorMessage: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
+  async signUpOng(req: Request, res: Response, filePath?: string) {
+    try {
+      const data: CreateUserInput = req.body;
+      const ongData: OngDto = req.body.ong as OngDto;
       const findUser = await this.authRepository.findByEmail(data.email);
 
       const filteredData = ExtractType(req.body, [
@@ -82,9 +153,6 @@ class AuthController {
         "updatedAt",
       ]);
 
-
-      console.log("request: ", req.body);
-
       if (findUser !== null) {
         throw new ErrorResponse(
           ErrorMessageUser.ALREADY_EXISTS,
@@ -93,15 +161,18 @@ class AuthController {
       } else {
         const encondePassword = await encode(filteredData.password);
 
-        if (typeof encondePassword === "string" && filePath) {
-          const createUser = await this.authRepository.createUser({
-            ...filteredData,
-            password: encondePassword,
-            status: StatusEnum.ACTIVE,
-            role: "ADOPTER",
-            password_reset_token: null,
-            password_reset_experies: null
-          });
+        if (typeof encondePassword === "string") {
+          const createUser = await this.authRepository.createOng(
+            {
+              ...filteredData,
+              password: encondePassword,
+              status: StatusEnum.ACTIVE,
+              role: RoleEnum.ONG,
+              password_reset_token: null,
+              password_reset_experies: null,
+            },
+            ongData
+          );
 
           return res.status(SuccessCode.USER_CREATED).json({
             status: SuccessMessage.USER_CREATED,

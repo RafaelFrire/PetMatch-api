@@ -11,6 +11,45 @@ class AuthRepository {
         ...data
       }
     });
+    
+  }
+
+  async createAdopter(data: User, adopter:AdotperDto): Promise<User> {  
+    return prismaClient.user.create({
+      data:{
+        ...data,
+        adopter:{
+            create:{
+              document:adopter.document,
+              phone:adopter.phone,
+              address:adopter.address,
+              zipcode:adopter.zipcode,
+              state:adopter.state,
+              city:adopter.city
+            }
+        }
+      }
+    })
+}
+
+  async createOng(data: User, ong: OngDto): Promise<User> {
+    return prismaClient.user.create({
+      data:{
+        ...data,
+        ong:{
+          create:{
+            name: ong.name,
+            slug: ong.slug,
+            cnpj:ong.cnpj,
+            phone:ong.phone,
+            address:ong.address,
+            zipcode:ong.zipcode,
+            state:ong.state,
+            city:ong.city
+          }
+        }
+      }
+    })
   }
 }
 
