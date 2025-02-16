@@ -9,6 +9,9 @@ const router = Router();
 const blogController:BlogController = new BlogController();
 
 
+router.post("/api/articles/create", (req:Request, res:Response) =>{
+    blogController.createArticle(req, res);
+});
 
 
 export default router;

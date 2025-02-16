@@ -70,7 +70,17 @@ class AuthController {
       const data: CreateUserInput = req.body;
       const findUser = await this.authRepository.findByEmail(data.email);
 
-      const filteredData = ExtractType(req.body, ["id","email", "name", "lastname","password", "status", "documentPath", "createdAt","updatedAt"]);
+      const filteredData = ExtractType(req.body, [
+        "id",
+        "email",
+        "name",
+        "lastname",
+        "password",
+        "status",
+        "documentPath",
+        "createdAt",
+        "updatedAt",
+      ]);
 
 
       console.log("request: ", req.body);
