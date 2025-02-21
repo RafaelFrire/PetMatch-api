@@ -11,7 +11,6 @@ class AuthRepository {
         ...data
       }
     });
-    
   }
 
   async createAdopter(data: User, adopter:AdotperDto): Promise<User> {  

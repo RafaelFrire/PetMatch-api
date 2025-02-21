@@ -2,7 +2,7 @@ class ArticleSectionDto {
   title: string;
   content: string;
   image: string;
-  quoto: string;
+  quote: string;
   articleId: number;
 
   constructor(
@@ -10,13 +10,13 @@ class ArticleSectionDto {
     content: string,
     articleId: number,
     image: string,
-    quoto: string
+    quote: string
   ) {
     this.title = title;
     this.content = content;
     this.articleId = articleId;
     this.image = image;
-    this.quoto = quoto;
+    this.quote = quote;
   }
 }
 
