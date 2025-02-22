@@ -1,15 +1,30 @@
 import { Request, Response } from "express";
 import BlogService from "./blog.service";
+import { SuccessCode } from "../../constants/sucessCode";
+import ErrorCode from "../../constants/errorCode";
 
 class BlogController {
   blogService: BlogService = new BlogService();
 
-  async getUniqueArticle(req: Request, res: Response) {
+  async getArticleById(req: Request, res: Response) {
+    try {
+      const article = await this.blogService.getArticleById(req, res);
+      res.status(SuccessCode.SUCCESS).json(article);
+    } catch (error) {
+      res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: (error as Error).message });
+    }
+  }
+
+  async getArticleBySlug(req: Request, res: Response) {
     try {
       const article = await this.blogService.getArticleBySlug(req, res);
-      res.status(200).json(article);
+      res.status(SuccessCode.SUCCESS).json(article);
     } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
+      res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: (error as Error).message });
     }
   }
 
@@ -17,18 +32,22 @@ class BlogController {
     try {
       const articles = await this.blogService.getArticles(req, res);
 
-      res.status(200).json(articles);
+      res.status(SuccessCode.SUCCESS).json(articles);
     } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
+      res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: (error as Error).message });
     }
   }
 
   async createArticle(req: Request, res: Response) {
     try {
       const article = await this.blogService.createArticle(req, res);
-      res.status(201).json(article);
+      res.status(SuccessCode.CREATED).json(article);
     } catch (error) {
-      res.status(500).json({ message: (error as Error).message });
+      res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: (error as Error).message });
     }
   }
 }

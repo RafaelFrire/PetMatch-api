@@ -45,7 +45,7 @@ class AuthController {
         { expiresIn: auth.expires } // Tempo de expiração do token
       );
 
-      return res.status(SuccessCode.LOGIN_SUCCESS).json({
+      return res.status(SuccessCode.SUCCESS).json({
         message: SuccessMessage.LOGIN_SUCCESS,
         user: {
           name: findUser.name,
@@ -113,7 +113,7 @@ class AuthController {
             adopterData
           );
 
-          return res.status(SuccessCode.USER_CREATED).json({
+          return res.status(SuccessCode.CREATED).json({
             status: SuccessMessage.USER_CREATED,
             message: SuccessMessage.USER_CREATED,
             data: createUser,
@@ -174,7 +174,7 @@ class AuthController {
             ongData
           );
 
-          return res.status(SuccessCode.USER_CREATED).json({
+          return res.status(SuccessCode.CREATED).json({
             status: SuccessMessage.USER_CREATED,
             message: SuccessMessage.USER_CREATED,
             data: createUser,

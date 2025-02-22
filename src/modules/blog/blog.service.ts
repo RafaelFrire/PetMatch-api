@@ -3,13 +3,71 @@ import ArticleDto from "../../dto/ArticleDto";
 import ArticleSectionDto from "../../dto/ArticleSectionDto";
 import BlogRepository from "./blog.repository";
 import prismaClient from "../../database";
+import ErrorCode from "../../constants/errorCode";
+import { ErrorMessage } from "../../constants/errorMessage";
 
 class BlogService {
   blogRepository: BlogRepository = new BlogRepository();
 
-  async getArticleBySlug(req: Request, res: Response) {}
+  async getArticleById(req: Request, res: Response) {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
+    }
+    try {
+      const article = await this.blogRepository.getArticleById(id);
+      if (!article) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "Article not found" });
+      }
+      return article;
+    } catch (err) {
+      console.error("Database error:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
 
-  async getArticles(req: Request, res: Response) {}
+  async getArticleBySlug(req: Request, res: Response) {
+    const slug = req.params.slug;
+
+    if (!slug) {
+      return res
+        .status(ErrorCode.BAD_REQUEST)
+        .json({ message: "Invalid slug" });
+    }
+
+    try {
+      const article = await this.blogRepository.getArticleBySlug(slug);
+
+      if (!article) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "Article not found" });
+      }
+
+      return article;
+    } catch (err) {
+      console.error("Database error:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
+
+  async getArticles(req: Request, res: Response) {
+    try {
+      const articles = await this.blogRepository.getArticles();
+      return articles;
+    } catch (err) {
+      console.error("Database error:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
 
   async createArticle(req: Request, res: Response) {
     const article = req.body.article as ArticleDto;
@@ -17,7 +75,9 @@ class BlogService {
     console.log("data:", article.ongId);
 
     if (!article || !sections) {
-      return res.status(400).json({ message: "Invalid data" });
+      return res
+        .status(ErrorCode.BAD_REQUEST)
+        .json({ message: "Invalid data" });
     }
     try {
       const findOng = await prismaClient.ong.findUnique({
@@ -25,7 +85,9 @@ class BlogService {
       });
 
       if (!findOng) {
-        return res.status(404).json({ message: "Ong not found" });
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "Ong not found" });
       }
 
       const newArticle = await this.blogRepository.createArticle(
@@ -35,7 +97,9 @@ class BlogService {
       return newArticle;
     } catch (err) {
       console.error("Database error:", err);
-      return res.status(500).json({ message: "Internal server error" });
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
     }
   }
 }
