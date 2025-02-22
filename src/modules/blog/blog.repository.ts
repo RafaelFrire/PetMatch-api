@@ -39,9 +39,16 @@ class BlogRepository {
       where: { slug },
     });
   }
-  async getArticles() {
+  async getArticles(page: number, limit: number) {
     return await prismaClient.article.findMany({
-      include: {},
+      skip: (page - 1) * limit,
+      take: limit,
+      include: {
+        sections: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
   }
 }

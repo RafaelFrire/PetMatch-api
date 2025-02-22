@@ -59,8 +59,10 @@ class BlogService {
 
   async getArticles(req: Request, res: Response) {
     try {
-      const articles = await this.blogRepository.getArticles();
-      return articles;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 20;
+      const articles = await this.blogRepository.getArticles(page, limit);
+      return {articles, page, limit};
     } catch (err) {
       console.error("Database error:", err);
       return res
