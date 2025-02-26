@@ -9,7 +9,7 @@ class BlogController {
   async getArticleById(req: Request, res: Response) {
     try {
       const article = await this.blogService.getArticleById(req, res);
-      res.status(SuccessCode.SUCCESS).json(article);
+      return article;
     } catch (error) {
       res
         .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -20,7 +20,7 @@ class BlogController {
   async getArticleBySlug(req: Request, res: Response) {
     try {
       const article = await this.blogService.getArticleBySlug(req, res);
-      res.status(SuccessCode.SUCCESS).json(article);
+      return article;
     } catch (error) {
       res
         .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -31,8 +31,7 @@ class BlogController {
   async getArticles(req: Request, res: Response) {
     try {
       const articles = await this.blogService.getArticles(req, res);
-
-      res.status(SuccessCode.SUCCESS).json(articles);
+      return articles;
     } catch (error) {
       res
         .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -43,7 +42,7 @@ class BlogController {
   async createArticle(req: Request, res: Response) {
     try {
       const article = await this.blogService.createArticle(req, res);
-      res.status(SuccessCode.CREATED).json(article);
+      return article;
     } catch (error) {
       res
         .status(ErrorCode.INTERNAL_EXCEPTION)

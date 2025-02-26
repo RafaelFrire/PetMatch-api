@@ -42,13 +42,12 @@ class BlogService {
     try {
       const article = await this.blogRepository.getArticleBySlug(slug);
 
-      if (!article) {
+      if (article === null) {
         return res
           .status(ErrorCode.NOT_FOUND)
           .json({ message: "Article not found" });
       }
-
-      return article;
+      return res.status(200).json(article);
     } catch (err) {
       console.error("Database error:", err);
       return res
@@ -62,7 +61,8 @@ class BlogService {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 20;
       const articles = await this.blogRepository.getArticles(page, limit);
-      return {articles, page, limit};
+      
+      return res.status(200).json({ articles, page, limit });
     } catch (err) {
       console.error("Database error:", err);
       return res
@@ -74,7 +74,6 @@ class BlogService {
   async createArticle(req: Request, res: Response) {
     const article = req.body.article as ArticleDto;
     const sections = req.body.sections as ArticleSectionDto[];
-    console.log("data:", article.ongId);
 
     if (!article || !sections) {
       return res
@@ -96,7 +95,8 @@ class BlogService {
         article,
         sections
       );
-      return newArticle;
+      return res.status(200).json(newArticle);
+
     } catch (err) {
       console.error("Database error:", err);
       return res

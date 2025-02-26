@@ -37,6 +37,9 @@ class BlogRepository {
   async getArticleBySlug(slug: string) {
     return await prismaClient.article.findFirst({
       where: { slug },
+      include: {
+        sections: true,
+      },
     });
   }
   async getArticles(page: number, limit: number) {
