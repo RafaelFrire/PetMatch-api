@@ -59,6 +59,7 @@ model Article {
   slug String
   categorie String
   thumbnail String
+  content   String  @db.Text 
   createdAt DateTime @default(now())  
   updatedAt DateTime @updatedAt
   ong Ong @relation(fields: [ongId], references: [id])
@@ -70,7 +71,7 @@ model Section {
   id        String @id @default(uuid())
   articleId String
   title     String  // Subtítulo
-  content   String  // Texto do subtítulo
+  content   String  @db.Text 
   quote String?
   image String? 
   article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)

@@ -42,17 +42,27 @@ class BlogRepository {
       },
     });
   }
-  async getArticles(page: number, limit: number) {
-    return await prismaClient.article.findMany({
-      skip: (page - 1) * limit,
-      take: limit,
-      include: {
-        sections: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  async getArticles(page: number, limit: number, categorie?: string) {
+    const [articles, totalArticles] = await Promise.all([
+      prismaClient.article.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        where: {
+          categorie,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prismaClient.article.count(),
+    ]);
+
+    const totalPages = Math.ceil(totalArticles / limit);
+
+    return {
+      articles,
+      totalPages,
+    };
   }
 }
 
