@@ -2,6 +2,7 @@ class ArticleDto {
   title: string;
   slug: string;
   categorie: string;
+  banner:string;
   thumbnail: string;
   content: string;
   ongId: string;
@@ -11,6 +12,7 @@ class ArticleDto {
     slug: string,
     categorie: string,
     thumbnail: string,
+    banner: string,
     content: string,
     ongId: string
   ) {
@@ -19,6 +21,7 @@ class ArticleDto {
     this.categorie = categorie;
     this.content = content;
     this.thumbnail = thumbnail;
+    this.banner = banner;
     this.ongId = ongId;
   }
 }

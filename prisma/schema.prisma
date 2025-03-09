@@ -7,24 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id                      String    @id @default(uuid())
-  email                   String    @unique
-  name                    String
-  lastname                String?
-  role                    Role      @default(ADOPTER)
-  password                String
-  createdAt               DateTime  @default(now())
-  updatedAt               DateTime  @updatedAt
-  documentPath            String?
-  password_reset_token    String?
-  password_reset_experies DateTime?
-  status                  Status
-  ong                     Ong?      @relation("UserToOng")
-  adopter                 Adopter?  @relation("UserToAdopter")
-}
-
-model Adopter {
+model adopter {
   id       String @id @default(uuid())
   document String
   phone    String
@@ -32,59 +15,78 @@ model Adopter {
   zipcode  String
   state    String
   city     String
-
-  user   User   @relation("UserToAdopter", fields: [userId], references: [id])
-  userId String @unique
+  userId   String @unique(map: "Adopter_userId_key")
+  user     user   @relation(fields: [userId], references: [id], map: "Adopter_userId_fkey")
 }
 
-model Ong {
-  id      String @id @default(uuid())
-  name    String
-  slug    String
+model article {
+  id        String   @id @default(uuid())
+  title     String
+  categorie String
+  thumbnail String
+  banner    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  ongId     String
+  slug      String
+  ong       ong       @relation(fields: [ongId], references: [id], map: "Article_ongId_fkey")
+  section   section[]
+
+  @@index([ongId], map: "Article_ongId_fkey")
+}
+
+model ong {
+  id      String    @id @default(uuid())
   cnpj    String
   phone   String
   address String
   zipcode String
   state   String
   city    String
-  
-  user   User   @relation("UserToOng", fields: [userId], references: [id])
-  userId String @unique
-  articles Article[]
+  userId  String    @unique(map: "Ong_userId_key")
+  name    String
+  slug    String
+  article article[]
+  user    user      @relation(fields: [userId], references: [id], map: "Ong_userId_fkey")
 }
 
-model Article {
-  id String @id @default(uuid())
-  title String
-  slug String
-  categorie String
-  thumbnail String
-  content   String  @db.Text 
-  createdAt DateTime @default(now())  
-  updatedAt DateTime @updatedAt
-  ong Ong @relation(fields: [ongId], references: [id])
-  ongId String
-  sections   Section[]
-}
-
-model Section {
-  id        String @id @default(uuid())
+model section {
+  id        String  @id @default(uuid())
   articleId String
-  title     String  // Subtítulo
-  content   String  @db.Text 
-  quote String?
-  image String? 
-  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  title     String
+  content   String  @db.Text
+  quote     String?
+  image     String?
+  position  Int     @default(0)
+  article   article @relation(fields: [articleId], references: [id], onDelete: Cascade, map: "Section_articleId_fkey")
+
+  @@index([articleId], map: "Section_articleId_fkey")
 }
 
+model user {
+  id                      String      @id @default(uuid())
+  email                   String      @unique(map: "User_email_key")
+  name                    String
+  lastname                String?
+  role                    user_role   @default(ADOPTER)
+  password                String
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime
+  documentPath            String?
+  password_reset_token    String?
+  password_reset_experies DateTime?
+  status                  user_status
+  adopter                 adopter?
+  ong                     ong?
+}
 
-enum Role {
+enum user_role {
   ADMIN
   ADOPTER
   ONG
 }
 
-enum Status {
+enum user_status {
   ACTIVE
   INATIVE
   PENDING

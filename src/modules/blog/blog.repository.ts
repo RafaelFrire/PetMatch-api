@@ -1,4 +1,4 @@
-import { Article } from "@prisma/client";
+import { article } from "@prisma/client";
 import prismaClient from "../../database";
 import ArticleDto from "../../dto/ArticleDto";
 import ArticleSectionDto from "../../dto/ArticleSectionDto";
@@ -10,9 +10,11 @@ class BlogRepository {
         title: article.title,
         slug: article.slug, // slug UNIQUE
         categorie: article.categorie,
+        banner: article.banner,
         thumbnail: article.thumbnail,
         ongId: article.ongId,
-        sections: {
+        updatedAt: new Date(),
+        section: {
           createMany: {
             data: sections.map((section) => {
               return {
@@ -20,6 +22,7 @@ class BlogRepository {
                 content: section.content,
                 image: section.image,
                 quote: section.quote,
+                position: section.position,
               };
             }),
           },
@@ -38,7 +41,12 @@ class BlogRepository {
     return await prismaClient.article.findFirst({
       where: { slug },
       include: {
-        sections: true,
+      section: {
+        orderBy: {
+        position: "asc",
+        },
+      },
+      ong: {},
       },
     });
   }

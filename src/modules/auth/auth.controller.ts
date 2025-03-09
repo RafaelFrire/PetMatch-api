@@ -1,7 +1,7 @@
 import { Request, response, Response } from "express";
 import { ErrorResponse } from "../../exceptions/errorResponse";
 import { ErrorMessage, ErrorMessageUser } from "../../constants/errorMessage";
-import AuthRepository from "../../repository/authRepository";
+import AuthRepository from "./authRepository";
 import { decrypt, encode } from "../../config/bcrypt";
 import { CreateUserInput, User } from "../../interfaces/User";
 import ErrorCode from "../../constants/errorCode";
@@ -72,13 +72,12 @@ class AuthController {
       const adopterData: AdotperDto = req.body.adopter as AdotperDto;
       const findUser = await this.authRepository.findByEmail(data.email);
 
-      if(!data || !adopterData){
+      if (!data || !adopterData) {
         throw new ErrorResponse(
           ErrorMessage.BAD_REQUEST,
           ErrorCode.BAD_REQUEST
         );
       }
-
 
       const filteredData = ExtractType(req.body, [
         "id",
