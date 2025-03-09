@@ -6,6 +6,23 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+model user {
+  id                      String      @id @default(uuid())
+  email                   String      @unique(map: "User_email_key")
+  name                    String
+  lastname                String?
+  role                    user_role   @default(ADOPTER)
+  password                String
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime
+  documentPath            String?
+  password_reset_token    String?
+  password_reset_experies DateTime?
+  status                  user_status
+  adopter                 adopter?
+  ong                     ong?
+}
+
 
 model adopter {
   id       String @id @default(uuid())
@@ -17,6 +34,22 @@ model adopter {
   city     String
   userId   String @unique(map: "Adopter_userId_key")
   user     user   @relation(fields: [userId], references: [id], map: "Adopter_userId_fkey")
+}
+
+model ong {
+  id      String    @id @default(uuid())
+  cnpj    String
+  phone   String
+  address String
+  zipcode String
+  state   String
+  city    String
+  userId  String    @unique(map: "Ong_userId_key")
+  name    String
+  slug    String
+  article article[]
+  events event[]
+  user    user      @relation(fields: [userId], references: [id], map: "Ong_userId_fkey")
 }
 
 model article {
@@ -35,20 +68,8 @@ model article {
   @@index([ongId], map: "Article_ongId_fkey")
 }
 
-model ong {
-  id      String    @id @default(uuid())
-  cnpj    String
-  phone   String
-  address String
-  zipcode String
-  state   String
-  city    String
-  userId  String    @unique(map: "Ong_userId_key")
-  name    String
-  slug    String
-  article article[]
-  user    user      @relation(fields: [userId], references: [id], map: "Ong_userId_fkey")
-}
+
+
 
 model section {
   id        String  @id @default(uuid())
@@ -63,22 +84,21 @@ model section {
   @@index([articleId], map: "Section_articleId_fkey")
 }
 
-model user {
-  id                      String      @id @default(uuid())
-  email                   String      @unique(map: "User_email_key")
-  name                    String
-  lastname                String?
-  role                    user_role   @default(ADOPTER)
-  password                String
-  createdAt               DateTime    @default(now())
-  updatedAt               DateTime
-  documentPath            String?
-  password_reset_token    String?
-  password_reset_experies DateTime?
-  status                  user_status
-  adopter                 adopter?
-  ong                     ong?
+model event {
+  id          String   @id @default(cuid())
+  title       String
+  slug       String
+  categorie       String
+  description String
+  imageUrl    String
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ongId       String
+  ong         ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
 }
+
+
 
 enum user_role {
   ADMIN

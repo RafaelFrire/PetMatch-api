@@ -41,12 +41,12 @@ class BlogRepository {
     return await prismaClient.article.findFirst({
       where: { slug },
       include: {
-      section: {
-        orderBy: {
-        position: "asc",
+        section: {
+          orderBy: {
+            position: "asc",
+          },
         },
-      },
-      ong: {},
+        ong: {},
       },
     });
   }
