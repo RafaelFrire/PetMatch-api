@@ -106,7 +106,7 @@ class BlogService {
         article,
         sections
       );
-      return res.status(200).json(newArticle);
+      return res.status(201).json(newArticle);
 
     } catch (err) {
       console.error("Database error:", err);

@@ -8,8 +8,8 @@ class EventController{
 
     async getEventById(req: Request, res: Response) {
       try {
-        const article = await this.eventService.getEventById(req, res);
-        return article;
+        const event = await this.eventService.getEventById(req, res);
+        return event;
       } catch (error) {
         res
           .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -19,8 +19,8 @@ class EventController{
   
     async getEventBySlug(req: Request, res: Response) {
       try {
-        const article = await this.eventService.getEventBySlug(req, res);
-        return article;
+        const event = await this.eventService.getEventBySlug(req, res);
+        return event;
       } catch (error) {
         res
           .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -30,8 +30,8 @@ class EventController{
   
     async getEvents(req: Request, res: Response) {
       try {
-        const articles = await this.eventService.getEvents(req, res);
-        return articles;
+        const events = await this.eventService.getEvents(req, res);
+        return events;
       } catch (error) {
         res
           .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -41,8 +41,8 @@ class EventController{
   
     async createEvent(req: Request, res: Response) {
       try {
-        const article = await this.eventService.createEvent(req, res);
-        return article;
+        const event = await this.eventService.createEvent(req, res);
+        return event;
       } catch (error) {
         res
           .status(ErrorCode.INTERNAL_EXCEPTION)

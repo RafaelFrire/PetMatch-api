@@ -14,13 +14,13 @@ class EventService{
           return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
         }
         try {
-          const article = await this.eventRepository.getEventById(id);
-          if (!article) {
+          const event = await this.eventRepository.getEventById(id);
+          if (!event) {
             return res
               .status(ErrorCode.NOT_FOUND)
-              .json({ message: "Article not found" });
+              .json({ message: "event not found" });
           }
-          return article;
+          return event;
         } catch (err) {
           console.error("Database error:", err);
           return res
@@ -39,14 +39,14 @@ class EventService{
         }
     
         try {
-          const article = await this.eventRepository.getEventBySlug(slug);
+          const event = await this.eventRepository.getEventBySlug(slug);
     
-          if (article === null) {
+          if (event === null) {
             return res
               .status(ErrorCode.NOT_FOUND)
-              .json({ message: "Article not found" });
+              .json({ message: "event not found" });
           }
-          return res.status(200).json(article);
+          return res.status(200).json(event);
         } catch (err) {
           console.error("Database error:", err);
           return res
@@ -62,13 +62,13 @@ class EventService{
           const categorie = req.query.categorie as string;
     
     
-          const { articles, totalPages } = await this.eventRepository.getEvents(
+          const { events, totalPages } = await this.eventRepository.getEvents(
             page,
             limit,
             categorie
           );
           
-          return res.status(200).json({ articles, page, limit, totalPages });
+          return res.status(200).json({ events, page, limit, totalPages });
         } catch (err) {
           console.error("Database error:", err);
           return res
@@ -89,7 +89,7 @@ class EventService{
             .json({ message: "Invalid data" });
         }
         try {
-          const findOng = await prismaClient.event.findUnique({
+          const findOng = await prismaClient.ong.findUnique({
             where: { id: event.ongId },
           });
     
@@ -100,7 +100,7 @@ class EventService{
           }
     
           const newEvent = await this.eventRepository.createEvent(event);
-          return res.status(200).json(newEvent);
+          return res.status(201).json(newEvent);
     
         } catch (err) {
           console.error("Database error:", err);
