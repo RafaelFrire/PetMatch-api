@@ -72,6 +72,18 @@ class BlogRepository {
       totalPages,
     };
   }
+
+  
+  async destroy(id: string){
+    return prismaClient.article.delete({
+      where: {
+        id,
+      },
+      include: {
+        section: true,
+      },
+    });
+  }
 }
 
 export default BlogRepository;

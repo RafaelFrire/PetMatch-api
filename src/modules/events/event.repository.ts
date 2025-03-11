@@ -43,6 +43,15 @@ class EventRepository {
       totalPages,
     };
   }
+
+
+  async destroy(id: string){
+    return prismaClient.event.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }
 
 export default EventRepository;

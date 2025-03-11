@@ -10,21 +10,13 @@ router.get("/api/events", ValidateJwt, (req: Request, res: Response) => {
   eventController.getEvents(req, res);
 });
 
-router.get(
-  "/api/event/:slug/slug",
-  ValidateJwt,
-  (req: Request, res: Response) => {
-    eventController.getEventBySlug(req, res);
-  }
-);
+router.get("/api/event/:slug/slug", (req: Request, res: Response) => {
+  eventController.getEventBySlug(req, res);
+});
 
-router.get(
-  "/api/events/:id/id",
-  ValidateJwt,
-  (req: Request, res: Response) => {
-    eventController.getEventById(req, res);
-  }
-);
+router.get("/api/events/:id/id", (req: Request, res: Response) => {
+  eventController.getEventById(req, res);
+});
 
 router.post(
   "/api/events/create",
