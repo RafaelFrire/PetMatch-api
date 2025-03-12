@@ -25,6 +25,7 @@ class AuthRepository {
             zipcode: adopter.zipcode,
             state: adopter.state,
             city: adopter.city,
+            
           },
         },
       },

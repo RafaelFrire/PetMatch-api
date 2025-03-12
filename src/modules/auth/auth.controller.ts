@@ -68,8 +68,9 @@ class AuthController {
   }
   async signUp(req: Request, res: Response, filePath?: string) {
     try {
-      const data: CreateUserInput = req.body;
-      const adopterData: AdotperDto = req.body.adopter as AdotperDto;
+      console.log(req.body)
+      const data: CreateUserInput = req.body as CreateUserInput;
+      const adopterData: AdotperDto = req.body as AdotperDto;
       const findUser = await this.authRepository.findByEmail(data.email);
 
       if (!data || !adopterData) {
