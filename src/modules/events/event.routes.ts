@@ -6,7 +6,7 @@ const eventController: EventController = new EventController();
 
 const router = Router();
 
-router.get("/api/events", ValidateJwt, (req: Request, res: Response) => {
+router.get("/api/events", (req: Request, res: Response) => {
   eventController.getEvents(req, res);
 });
 
