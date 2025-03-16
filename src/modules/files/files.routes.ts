@@ -15,7 +15,7 @@ const destinationPath = path.join(
   "uploads"
 );
 
-router.get("/api/search/:filePath", ValidateJwt, (req, res) => {
+router.get("/api/search/:filePath", (req, res) => {
   const { filePath } = req.params;
 
   const fileLocation = path.join(destinationPath, filePath);

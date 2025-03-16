@@ -77,13 +77,23 @@ class EventService {
   }
 
   async createEvent(req: Request, res: Response, filename?: string) {
-    const event = req.body.event as EventDto;
+    const event: EventDto = req.body;
 
-    if (!event) {
-      return res
-        .status(ErrorCode.BAD_REQUEST)
-        .json({ message: "Invalid data" });
+    const requiredFields = [
+      'title', 'slug', 'categorie', 'time', 'location', 'address', 'city', 
+      'state', 'description', 'additionalInfo', 'date', 'ongId', 'createdAt', 
+      'updatedAt', 'imageUrl', 'id'
+    ];
+    
+    // Verificar dinamicamente se algum campo obrigatório está ausente
+    for (const field of requiredFields) {
+      if (!(field in event)) {  // Aqui estamos usando 'in' para garantir que a chave exista
+        return res
+          .status(ErrorCode.BAD_REQUEST)
+          .json({ message: `${field} is required` });
+      }
     }
+    
     try {
       const findOng = await prismaClient.ong.findUnique({
         where: { id: event.ongId },

@@ -9,6 +9,7 @@ function ensureUploadsDirectoryExists() {
       "..",
       "..",
       "..",
+      "PetMatch",
       "tmp/uploads"
     );
     console.log("Diretório de uploads:", LOCAL_FILES_PATH);
