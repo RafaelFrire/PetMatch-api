@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import ValidateJwt from "../../middleware/ValidateToken";
 import EventController from "./event.controller";
+import upload from "../../config/multerConfig";
 
 const eventController: EventController = new EventController();
 
@@ -21,7 +22,10 @@ router.get("/api/events/:id/id", (req: Request, res: Response) => {
 router.post(
   "/api/events/create",
   ValidateJwt,
+  upload,
   (req: Request, res: Response) => {
+    const files = req.files as Express.Multer.File[]; // Garantimos que é um array
+    const filename = files.length > 0 ? files[0].filename : "";
     eventController.createEvent(req, res);
   }
 );

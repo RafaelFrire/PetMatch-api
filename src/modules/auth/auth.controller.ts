@@ -66,7 +66,7 @@ class AuthController {
         .json({ errorMessage: ErrorMessage.INTERNAL_EXCEPTION });
     }
   }
-  async signUp(req: Request, res: Response, filePath?: string) {
+  async signUp(req: Request, res: Response, filename?: string) {
     try {
       console.log(req.body)
       const data: CreateUserInput = req.body as CreateUserInput;
@@ -107,6 +107,7 @@ class AuthController {
               password: encondePassword,
               status: StatusEnum.ACTIVE,
               role: RoleEnum.ADOPTER,
+              documentPath: filename || "",
               password_reset_token: null,
               password_reset_experies: null,
             },
@@ -135,7 +136,7 @@ class AuthController {
         .json({ errorMessage: ErrorMessage.INTERNAL_EXCEPTION });
     }
   }
-  async signUpOng(req: Request, res: Response, filePath?: string) {
+  async signUpOng(req: Request, res: Response, filename?: string) {
     try {
       const data: CreateUserInput = req.body;
       const ongData: OngDto = req.body.ong as OngDto;

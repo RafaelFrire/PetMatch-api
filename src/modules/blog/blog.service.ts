@@ -58,17 +58,16 @@ class BlogService {
 
   async getArticles(req: Request, res: Response) {
     try {
-      const page = Number(req.query.page) || 1 as number;
-      const limit = Number(req.query.limit) || 20 as number;
+      const page = Number(req.query.page) || (1 as number);
+      const limit = Number(req.query.limit) || (20 as number);
       const categorie = req.query.categorie as string;
-
 
       const { articles, totalPages } = await this.blogRepository.getArticles(
         page,
         limit,
         categorie
       );
-      
+
       return res.status(200).json({ articles, page, limit, totalPages });
     } catch (err) {
       console.error("Database error:", err);
@@ -78,13 +77,9 @@ class BlogService {
     }
   }
 
-  async createArticle(req: Request, res: Response) {
+  async createArticle(req: Request, res: Response, filename?: string) {
     const article = req.body.article as ArticleDto;
     const sections = req.body.sections as ArticleSectionDto[];
-
-    console.log("article", article);
-    console.log("sections", sections);
-
 
     if (!article || !sections) {
       return res
@@ -104,10 +99,10 @@ class BlogService {
 
       const newArticle = await this.blogRepository.createArticle(
         article,
-        sections
+        sections,
+        filename
       );
       return res.status(201).json(newArticle);
-
     } catch (err) {
       console.error("Database error:", err);
       return res

@@ -39,9 +39,9 @@ class BlogController {
     }
   }
 
-  async createArticle(req: Request, res: Response) {
+  async createArticle(req: Request, res: Response, filename?: string) {
     try {
-      const article = await this.blogService.createArticle(req, res);
+      const article = await this.blogService.createArticle(req, res, filename);
       return article;
     } catch (error) {
       res

@@ -24,8 +24,17 @@ router.get("/api/articles/:id/id", (req:Request, res:Response) =>{
     blogController.getArticleById(req, res);
 });
 
-router.post("/api/articles/create", ValidateJwt, (req:Request, res:Response) =>{
-    blogController.createArticle(req, res);
-});
+router.post(
+  "/api/articles/create",
+  ValidateJwt,
+  upload,
+  (req: Request, res: Response) => {
+    const files = req.files as Express.Multer.File[]; // Garantimos que é um array
+    const filename = files.length > 0 ? files[0].filename : "";
+
+
+    blogController.createArticle(req, res, filename);
+  }
+);
 
 export default router;

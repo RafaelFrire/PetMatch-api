@@ -2,6 +2,7 @@ import path from 'path'
 import fs from 'fs'
 
 
+
 function ensureUploadsDirectoryExists() {
     const LOCAL_FILES_PATH = path.resolve(
       __dirname,

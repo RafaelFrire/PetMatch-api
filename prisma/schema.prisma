@@ -89,7 +89,13 @@ model event {
   title       String
   slug       String
   categorie       String
+  time String
+  location String
+  address String
+  city String
+  state String
   description String
+  additionalInfo String
   imageUrl    String
   date        DateTime
   createdAt   DateTime @default(now())

@@ -39,7 +39,7 @@ class EventController{
       }
     }
   
-    async createEvent(req: Request, res: Response) {
+    async createEvent(req: Request, res: Response, filename?:string) {
       try {
         const event = await this.eventService.createEvent(req, res);
         return event;

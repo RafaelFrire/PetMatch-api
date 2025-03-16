@@ -1,17 +1,20 @@
-import { article } from "@prisma/client";
 import prismaClient from "../../database";
 import ArticleDto from "../../dto/ArticleDto";
 import ArticleSectionDto from "../../dto/ArticleSectionDto";
 
 class BlogRepository {
-  async createArticle(article: ArticleDto, sections: ArticleSectionDto[]) {
+  async createArticle(
+    article: ArticleDto,
+    sections: ArticleSectionDto[],
+    filename?: string
+  ) {
     return await prismaClient.article.create({
       data: {
         title: article.title,
         slug: article.slug, // slug UNIQUE
         categorie: article.categorie,
         banner: article.banner,
-        thumbnail: article.thumbnail,
+        thumbnail: filename || "",
         ongId: article.ongId,
         updatedAt: new Date(),
         section: {
@@ -73,8 +76,7 @@ class BlogRepository {
     };
   }
 
-  
-  async destroy(id: string){
+  async destroy(id: string) {
     return prismaClient.article.delete({
       where: {
         id,

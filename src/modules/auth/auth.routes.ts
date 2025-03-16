@@ -14,16 +14,15 @@ router.post("/api/auth/signin", (req: Request, res: Response) => {
 });
 
 router.post("/api/auth/signup", upload, (req: Request, res: Response) => {
-    const filePath = req.files || [];
     const files = req.files as Express.Multer.File[]; // Garantimos que é um array
+    const filename = files.length > 0 ? files[0].filename : "";
 
-    authController.signUp(req, res);
+    authController.signUp(req, res, filename);
 });
 
-
 router.post("/api/auth/signup_ong", upload, (req: Request, res: Response) => {
-    const filePath = req.files || [];
     const files = req.files as Express.Multer.File[]; // Garantimos que é um array
+    const filePath = files.length > 0 ? files[0].path : "";
 
     authController.signUpOng(req, res);
 });

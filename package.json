@@ -3,6 +3,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "seed": "ts-node-dev --respawn --transpile-only prisma/seed.ts",
     "watch:build": "tsc --watch"
   },
   "dependencies": {
@@ -20,6 +21,7 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express": "^5.0.0",
     "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.10",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.7.3",
     "yup": "^1.6.1"
