@@ -14,7 +14,7 @@ model user {
   role                    user_role   @default(ADOPTER)
   password                String
   createdAt               DateTime    @default(now())
-  updatedAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
   documentPath            String?
   password_reset_token    String?
   password_reset_experies DateTime?
@@ -60,7 +60,7 @@ model article {
   thumbnail String
   banner    String
   createdAt DateTime  @default(now())
-  updatedAt DateTime
+  updatedAt DateTime @updatedAt
   ongId     String
   slug      String
   ong       ong       @relation(fields: [ongId], references: [id], map: "Article_ongId_fkey")
@@ -68,8 +68,6 @@ model article {
 
   @@index([ongId], map: "Article_ongId_fkey")
 }
-
-
 
 
 model section {
@@ -109,22 +107,33 @@ model event {
 model Pet {
   id           String  @id @default(uuid())
   name         String
-  especie      String
-  raca         String
-  cor          String
-  porte        String
-  saude        String
-  temperamento String
-  nascimento   DateTime
-  status       Boolean @default(true) // true para disponível, false para indisponível
-  historia     String
+  species      String
+  breed        String
+  color        String
+  size         String
+  health       String
+  temperament  String
+  birthdate    DateTime
+  status       Boolean @default(true) // true for available, false for unavailable
+  history      String
   slug         String  @unique
   ongId       String
   ong         ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
-
+  images       PetImage[] @relation("PetImages")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   @@map("pets") // Nome da tabela no banco de dados
 }
 
+model PetImage {
+  id        String   @id @default(uuid())
+  url       String
+  petId     String
+  pet       Pet      @relation("PetImages", fields: [petId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("images") // Nome da tabela no banco de dados
+}
 
 
 enum user_role {
