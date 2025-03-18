@@ -29,9 +29,8 @@ router.post(
   ValidateJwt,
   upload,
   (req: Request, res: Response) => {
-    const files = req.files as Express.Multer.File[]; // Garantimos que é um array
-    const filename = files.length > 0 ? files[0].filename : "";
-
+    const files = req?.files as Express.Multer.File[]; // Garantimos que é um array
+    const filename = files?.length > 0 ? files[0].filename : "";
 
     blogController.createArticle(req, res, filename);
   }

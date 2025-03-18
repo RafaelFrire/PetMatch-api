@@ -49,6 +49,7 @@ model ong {
   slug    String
   article article[]
   events event[]
+  pets   Pet[]
   user    user      @relation(fields: [userId], references: [id], map: "Ong_userId_fkey")
 }
 
@@ -102,6 +103,26 @@ model event {
   updatedAt   DateTime @updatedAt
   ongId       String
   ong         ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
+}
+
+
+model Pet {
+  id           String  @id @default(uuid())
+  name         String
+  especie      String
+  raca         String
+  cor          String
+  porte        String
+  saude        String
+  temperamento String
+  nascimento   DateTime
+  status       Boolean @default(true) // true para disponível, false para indisponível
+  historia     String
+  slug         String  @unique
+  ongId       String
+  ong         ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
+
+  @@map("pets") // Nome da tabela no banco de dados
 }
 
 
