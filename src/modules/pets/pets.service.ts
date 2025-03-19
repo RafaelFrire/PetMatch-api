@@ -38,14 +38,14 @@ class PetsService {
     }
 
     try {
-      const Pet = await this.petRepository.getPetBySlug(slug);
+      const pet = await this.petRepository.getPetBySlug(slug);
 
-      if (Pet === null) {
+      if (pet === null) {
         return res
           .status(ErrorCode.NOT_FOUND)
           .json({ message: "Pet not found" });
       }
-      return res.status(200).json(event);
+      return res.status(200).json(pet);
     } catch (err) {
       console.error("Database error:", err);
       return res
@@ -58,15 +58,32 @@ class PetsService {
     try {
       const page = Number(req.query.page) || (1 as number);
       const limit = Number(req.query.limit) || (20 as number);
-      const categorie = req.query.categorie as string;
 
-      const { events, totalPages } = await this.petRepository.getAllPets(
+      const petFilters: any = {}; // Filtros do PET
+      const ongFilters: any = {}; // Filtros da ONG
+
+      // Filtros do PET
+      if (req.query.especie) petFilters.species = req.query.especie;
+      if (req.query.raca) petFilters.breed = req.query.raca;
+      if (req.query.porte) petFilters.size = req.query.porte;
+      if (req.query.saude) petFilters.health = req.query.saude;
+  
+      // Filtros da ONG (localização)
+      if (req.query.estado) ongFilters.state = req.query.estado;
+      if (req.query.cidade) ongFilters.city = req.query.cidade;
+
+
+      console.log("petFilters", petFilters)
+      console.log("ongFilters", ongFilters);
+
+      const { pets, totalPages } = await this.petRepository.getAllPets(
         page,
         limit,
-        categorie
+        petFilters,
+        ongFilters
       );
 
-      return res.status(200).json({ events, page, limit, totalPages });
+      return res.status(200).json({ pets, page, limit, totalPages });
     } catch (err) {
       console.error("Database error:", err);
       return res

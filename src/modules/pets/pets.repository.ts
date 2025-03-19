@@ -40,20 +40,38 @@ class PetsRepository {
     });
   }
 
-
-  async getAllPets(page: number, limit: number, categorie?: string) {
-    const [events, totalEvents] = await Promise.all([
+  async getAllPets(
+    page: number,
+    limit: number,
+    petFilters?: any,
+    ongFilters?: any
+  ) {
+    const [pets, totalPets] = await Promise.all([
       prismaClient.pet.findMany({
+        where: {
+          ...petFilters,
+          ong: {
+            is: { ...ongFilters },
+          },
+        },
+        include:{
+          images:{
+            select:{
+              url:true
+            }
+          }
+        },
         skip: (page - 1) * limit,
         take: limit,
       }),
+
       prismaClient.article.count(),
     ]);
 
-    const totalPages = Math.ceil(totalEvents / limit);
+    const totalPages = Math.ceil(totalPets / limit);
 
     return {
-      events,
+      pets,
       totalPages,
     };
   }
