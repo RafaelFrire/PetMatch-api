@@ -1,15 +1,14 @@
 import { Request, Response } from "express";
-
 import ErrorCode from "../../constants/errorCode";
-import PetsService from "./pets.service";
+import OngService from "./ong.service";
 
-class PetsController {
-  petsService: PetsService = new PetsService();
+class OngController {
+  ongService: OngService = new OngService();
 
-  async getPetById(req: Request, res: Response) {
+  async getOngById(req: Request, res: Response) {
     try {
-      const pet = await this.petsService.getPetById(req, res);
-      return pet;
+      const ong = await this.ongService.getOngById(req, res);
+      return ong;
     } catch (error) {
       res
         .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -17,10 +16,10 @@ class PetsController {
     }
   }
 
-  async getPetBySlug(req: Request, res: Response) {
+  async getOngBySlug(req: Request, res: Response) {
     try {
-      const pet = await this.petsService.getPetBySlug(req, res);
-      return pet;
+      const ong = await this.ongService.getOngBySlug(req, res);
+      return ong;
     } catch (error) {
       res
         .status(ErrorCode.INTERNAL_EXCEPTION)
@@ -28,9 +27,9 @@ class PetsController {
     }
   }
 
-  async getPets(req: Request, res: Response) {
+  async getOngs(req: Request, res: Response) {
     try {
-      const pets = await this.petsService.getAllPets(req, res);
+      const pets = await this.ongService.getAllOngs(req, res);
       return pets;
     } catch (error) {
       res
@@ -39,9 +38,9 @@ class PetsController {
     }
   }
 
-  async createPet(req: Request, res: Response, filenames: string[]) {
+  async createOng(req: Request, res: Response, filenames: string[]) {
     try {
-      const pet = await this.petsService.createPet(req, res, filenames);
+      const pet = await this.ongService.createOng(req, res, filenames);
       return pet;
     } catch (error) {
       res
@@ -51,4 +50,4 @@ class PetsController {
   }
 }
 
-export default PetsController;
+export default OngController;

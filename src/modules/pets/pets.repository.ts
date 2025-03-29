@@ -1,3 +1,4 @@
+import { Pet } from ".prisma/client";
 import prismaClient from "../../database";
 class PetsRepository {
   async createPet(pet: PetDto, filenames: string[]) {
@@ -15,10 +16,23 @@ class PetsRepository {
     return newPetRecord;
   }
 
-  async getPetBySlug(slug: string) {
-    return await prismaClient.pet.findUnique({
+  async getPetBySlug(slug: string): Promise<{ pet: Pet, images: string[] }> {
+    const findPet = await prismaClient.pet.findUnique({
       where: { slug },
     });
+
+    const findImages = await prismaClient.petImage.findMany({
+      where: {
+        petId: findPet?.id,
+      },
+    });
+    if (!findPet) {
+      throw new Error('Pet not found');
+    }
+    return {
+      pet: findPet,
+      images: findImages.map((image) => image.url)
+    };
   }
 
   async getPetById(id: string) {
@@ -54,12 +68,12 @@ class PetsRepository {
             is: { ...ongFilters },
           },
         },
-        include:{
-          images:{
-            select:{
-              url:true
-            }
-          }
+        include: {
+          images: {
+            select: {
+              url: true,
+            },
+          },
         },
         skip: (page - 1) * limit,
         take: limit,

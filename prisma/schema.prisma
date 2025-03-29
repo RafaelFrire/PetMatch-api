@@ -115,7 +115,7 @@ model Pet {
   temperament  String
   birthdate    DateTime
   status       Boolean @default(true) // true for available, false for unavailable
-  history      String
+  history      String @db.Text
   slug         String  @unique
   ongId       String
   ong         ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
