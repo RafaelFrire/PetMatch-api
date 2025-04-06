@@ -38,7 +38,7 @@ class OngService {
     }
 
     try {
-      const ong = await this.ongRepository.getOngBySlug(slug);
+      const { ong, images } = await this.ongRepository.getOngBySlug(slug);
 
       if (ong === null) {
         return res

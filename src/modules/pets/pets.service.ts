@@ -54,6 +54,32 @@ class PetsService {
     }
   }
 
+  async getPetsByOngSlug(req: Request, res: Response) {
+    const slug = req.params.slug;
+
+    if (!slug) {
+      return res
+        .status(ErrorCode.BAD_REQUEST)
+        .json({ message: "Invalid slug" });
+    }
+
+    try {
+      const pet = await this.petRepository.getPetsByOngSlug(slug);
+
+      if (pet === null) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "Pet not found" });
+      }
+      return res.status(200).json(pet);
+    } catch (err) {
+      console.error("Database error:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
+
   async getAllPets(req: Request, res: Response) {
     try {
       const page = Number(req.query.page) || (1 as number);
@@ -71,10 +97,6 @@ class PetsService {
       // Filtros da ONG (localização)
       if (req.query.estado) ongFilters.state = req.query.estado;
       if (req.query.cidade) ongFilters.city = req.query.cidade;
-
-
-      console.log("petFilters", petFilters)
-      console.log("ongFilters", ongFilters);
 
       const { pets, totalPages } = await this.petRepository.getAllPets(
         page,

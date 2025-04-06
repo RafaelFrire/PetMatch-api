@@ -15,6 +15,10 @@ router.get("/api/pets/:slug/slug", (req: Request, res: Response) => {
   petsController.getPetBySlug(req, res);
 });
 
+router.get("/api/pets/:slug/ong", (req: Request, res: Response) => {
+  petsController.getPetsByOngSlug(req, res);
+});
+
 router.get("/api/pets/:id/id", (req: Request, res: Response) => {
   petsController.getPetById(req, res);
 });

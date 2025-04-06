@@ -28,6 +28,17 @@ class PetsController {
     }
   }
 
+  async getPetsByOngSlug(req: Request, res: Response) {
+    try {
+      const pet = await this.petsService.getPetsByOngSlug(req, res);
+      return pet;
+    } catch (error) {
+      res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: (error as Error).message });
+    }
+  }
+
   async getPets(req: Request, res: Response) {
     try {
       const pets = await this.petsService.getAllPets(req, res);

@@ -21,12 +21,12 @@ router.get("/api/ong/:id/id", (req: Request, res: Response) => {
 
 router.post(
   "/api/ongs/create",
-  ValidateJwt,
   upload,
   (req: Request, res: Response) => {
     const files = req.files as Express.Multer.File[]; // Garantimos que é um array
     const filenames = files.map((file) => file.filename);
     console.log(filenames);
+    
     ongController.createOng(req, res, filenames);
   }
 );

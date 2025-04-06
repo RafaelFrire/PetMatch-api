@@ -35,6 +35,39 @@ class PetsRepository {
     };
   }
 
+  async getPetsByOngSlug(slug: string, limit: number = 10): Promise<{pets: {pet: Pet, images: string[]}[]}> {
+    const findPets = await prismaClient.pet.findMany({
+      where: {
+        ong: {
+          slug: slug,
+        },
+      },
+      take: limit,
+      orderBy:{
+        createdAt: 'desc',
+      }
+    });
+
+    const petsWithImages = await Promise.all(
+      findPets.map(async (pet) => {
+        const images = await prismaClient.petImage.findMany({
+          where: { petId: pet.id },
+        });
+        return {
+          pet,
+          images: images.map((image) => image.url),
+        };
+      })
+    );
+
+    if (!findPets.length) {
+      throw new Error('Pets not found');
+    }
+    return {
+      pets: petsWithImages,
+    };
+  }
+
   async getPetById(id: string) {
     return await prismaClient.pet.findUnique({
       where: { id },
