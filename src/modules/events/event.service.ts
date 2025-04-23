@@ -80,9 +80,18 @@ class EventService {
     const event: EventDto = req.body;
 
     const requiredFields = [
-      'title', 'slug', 'categorie', 'time', 'location', 'address', 'city', 
-      'state', 'description', 'additionalInfo', 'date', 'ongId', 'createdAt', 
-      'updatedAt', 'imageUrl', 'id'
+      "title",
+      "slug",
+      "categorie",
+      "time",
+      "location",
+      "address",
+      "city",
+      "state",
+      "description",
+      "additionalInfo",
+      "date",
+      "ongId",
     ];
     
     // Verificar dinamicamente se algum campo obrigatório está ausente
@@ -96,7 +105,7 @@ class EventService {
     
     try {
       const findOng = await prismaClient.ong.findUnique({
-        where: { id: event.ongId },
+        where: { userId: event.ongId },
       });
 
       if (!findOng) {
@@ -106,9 +115,24 @@ class EventService {
       }
 
       const newEvent = await this.eventRepository.createEvent({
-        ...event,
+        id: event.id,
+        title: event.title,
+        slug: event.slug,
+        categorie: event.categorie,
+        time: event.time,
+        location: event.location,
+        address: event.address,
+        city: event.city,
+        state: event.state,
+        description: event.description,
+        additionalInfo: event.additionalInfo,
+        date: new Date(event.date),
+        ongId: findOng.id,
         imageUrl: filename || "",
+        createdAt: new Date(),
+        updatedAt: new Date(),
       });
+      
       return res.status(201).json(newEvent);
     } catch (err) {
       console.error("Database error:", err);

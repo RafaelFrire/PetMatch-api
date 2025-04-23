@@ -48,6 +48,7 @@ class AuthController {
       return res.status(SuccessCode.SUCCESS).json({
         message: SuccessMessage.LOGIN_SUCCESS,
         user: {
+          id: findUser.id,
           name: findUser.name,
           lastname: findUser.lastname,
           email: findUser.email,

@@ -21,13 +21,13 @@ router.get("/api/events/:id/id", (req: Request, res: Response) => {
 
 router.post(
   "/api/events/create",
-  ValidateJwt,
+  // ValidateJwt,
   upload,
   (req: Request, res: Response) => {
     const files = req.files as Express.Multer.File[]; // Garantimos que é um array
     const filename = files.length > 0 ? files[0].filename : "";
-    console.log(req.body)
-    console.log(filename);
+    console.log("body", req.body);
+    console.log("files", filename);
     eventController.createEvent(req, res, filename);
   }
 );

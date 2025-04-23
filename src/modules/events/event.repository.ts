@@ -5,6 +5,7 @@ class EventRepository {
     return await prismaClient.event.create({
       data: {
         ...event,
+        id: undefined, // Prisma will auto-generate the ID
       },
     });
   }
