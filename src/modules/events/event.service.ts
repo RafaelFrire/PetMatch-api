@@ -10,19 +10,29 @@ class EventService {
 
   async getEventById(req: Request, res: Response) {
     const id = req.params.id;
+    console.log("getEventById called with id:", id);
+
     if (!id) {
+      console.warn("Invalid id provided");
       return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
     }
+
     try {
+      console.log("Fetching event with id:", id);
       const event = await this.eventRepository.getEventById(id);
+
       if (!event) {
+        console.warn("Event not found for id:", id);
         return res
           .status(ErrorCode.NOT_FOUND)
           .json({ message: "event not found" });
       }
-      return event;
+
+      console.log("Event fetched successfully:", event);
+      return res.status(200).json(event);
+
     } catch (err) {
-      console.error("Database error:", err);
+      console.error("Database error while fetching event by id:", err);
       return res
         .status(ErrorCode.INTERNAL_EXCEPTION)
         .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
@@ -134,6 +144,29 @@ class EventService {
       });
       
       return res.status(201).json(newEvent);
+    } catch (err) {
+      console.error("Database error:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
+  
+  async deleteEventById(req: Request, res: Response) {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
+    }
+    try {
+      const event = await this.eventRepository.getEventById(id);
+      if (!event) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "event not found" });
+      }
+
+      await this.eventRepository.destroy(id);
+      return res.status(200).json({ message: "event deleted" });
     } catch (err) {
       console.error("Database error:", err);
       return res

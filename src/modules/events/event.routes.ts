@@ -15,8 +15,12 @@ router.get("/api/event/:slug/slug", (req: Request, res: Response) => {
   eventController.getEventBySlug(req, res);
 });
 
-router.get("/api/events/:id/id", (req: Request, res: Response) => {
+router.get("/api/event/:id/id", (req: Request, res: Response) => {
   eventController.getEventById(req, res);
+});
+
+router.delete("/api/events/:id/id", (req: Request, res: Response) => {
+  eventController.deleteEventById(req, res);
 });
 
 router.post(
@@ -26,8 +30,6 @@ router.post(
   (req: Request, res: Response) => {
     const files = req.files as Express.Multer.File[]; // Garantimos que é um array
     const filename = files.length > 0 ? files[0].filename : "";
-    console.log("body", req.body);
-    console.log("files", filename);
     eventController.createEvent(req, res, filename);
   }
 );

@@ -49,6 +49,17 @@ class EventController{
           .json({ message: (error as Error).message });
       }
     }
+
+    async deleteEventById(req: Request, res: Response) {
+      try {
+        const event = await this.eventService.deleteEventById(req, res);
+        return event;
+      } catch (error) {
+        res
+          .status(ErrorCode.INTERNAL_EXCEPTION)
+          .json({ message: (error as Error).message });
+      }
+    }
 }
 
 export default EventController;
