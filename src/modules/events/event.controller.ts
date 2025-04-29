@@ -38,6 +38,16 @@ class EventController{
           .json({ message: (error as Error).message });
       }
     }
+    async updateEventById(req: Request, res: Response) {
+      try {
+        const updatedEvent = await this.eventService.updateEventById(req, res);
+        return updatedEvent;
+      } catch (error) {
+        res
+          .status(ErrorCode.INTERNAL_EXCEPTION)
+          .json({ message: (error as Error).message });
+      }
+    }
   
     async createEvent(req: Request, res: Response, filename?:string) {
       try {

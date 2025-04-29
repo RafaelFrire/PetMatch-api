@@ -45,6 +45,12 @@ class EventRepository {
     };
   }
 
+  async updateEvent(id: string, eventData: Partial<EventDto>) {
+    return await prismaClient.event.update({
+      where: { id },
+      data: eventData,
+    });
+  }
 
   async destroy(id: string){
     return prismaClient.event.delete({

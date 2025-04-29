@@ -19,6 +19,10 @@ router.get("/api/event/:id/id", (req: Request, res: Response) => {
   eventController.getEventById(req, res);
 });
 
+router.patch("/api/event/:id/id", (req: Request, res: Response) => {
+  eventController.updateEventById(req, res);
+});
+
 router.delete("/api/events/:id/id", (req: Request, res: Response) => {
   eventController.deleteEventById(req, res);
 });

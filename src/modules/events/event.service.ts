@@ -152,6 +152,33 @@ class EventService {
     }
   }
   
+  async updateEventById(req: Request, res: Response) {
+    const id = req.params.id;
+    const updates = req.body;
+
+    if (!id) {
+      return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
+    }
+
+    try {
+      const event = await this.eventRepository.getEventById(id);
+
+      if (!event) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "event not found" });
+      }
+
+      const updatedEvent = await this.eventRepository.updateEvent(id, updates);
+
+      return res.status(200).json(updatedEvent);
+    } catch (err) {
+      console.error("Database error while updating event:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
   async deleteEventById(req: Request, res: Response) {
     const id = req.params.id;
     if (!id) {
