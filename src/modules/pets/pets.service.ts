@@ -79,7 +79,40 @@ class PetsService {
         .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
     }
   }
+  async getPetsByOngId(req: Request, res: Response) {
+    try {
+      const id = req.params.id;
+      if (!id) {
+        return res
+          .status(ErrorCode.BAD_REQUEST)
+          .json({ message: "Invalid id" });
+      }
 
+      const findOng = await prismaClient.ong.findUnique({
+        where: { id: id },
+      });
+
+      if(!findOng) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "Ong not found" });
+      }
+      
+      const pets = await this.petRepository.getPetsByOngId(id);
+
+      if (pets === null) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "pets not found" });
+      }
+      return res.status(200).json(pets);
+    } catch (err) {
+      console.error("Database error:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
   async getAllPets(req: Request, res: Response) {
     try {
       const page = Number(req.query.page) || (1 as number);
@@ -93,7 +126,7 @@ class PetsService {
       if (req.query.raca) petFilters.breed = req.query.raca;
       if (req.query.porte) petFilters.size = req.query.porte;
       if (req.query.saude) petFilters.health = req.query.saude;
-  
+
       // Filtros da ONG (localização)
       if (req.query.estado) ongFilters.state = req.query.estado;
       if (req.query.cidade) ongFilters.city = req.query.cidade;
