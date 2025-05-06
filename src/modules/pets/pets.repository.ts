@@ -35,7 +35,7 @@ class PetsRepository {
     };
   }
 
-  async getPetsByOngSlug(slug: string, limit: number = 10): Promise<{pets: {pet: Pet, images: string[]}[]}> {
+  async getPetsByOngSlug(slug: string, limit: number): Promise<{pets: {pet: Pet, images: string[]}[]}> {
     const findPets = await prismaClient.pet.findMany({
       where: {
         ong: {
@@ -68,18 +68,23 @@ class PetsRepository {
     };
   }
 
-  async getPetsByOngId(id: string, limit: number = 10): Promise<{pets: {pet: Pet, images: string[]}[]}> {
-    const findPets = await prismaClient.pet.findMany({
-      where: {
-        ong: {
-          id,
+  async getPetsByOngId(id: string, limit: number, page: number): Promise<{pets: {pet: Pet, images: string[]}[], totalPages: number}> {
+    const [findPets, count] = await Promise.all([
+      prismaClient.pet.findMany({
+        where: {
+          ong: {
+            id,
+          },
         },
-      },
-      take: limit,
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+        take: limit,
+        skip: (page - 1) * limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prismaClient.pet.count(),
+    ]);
+
 
     const petsWithImages = await Promise.all(
       findPets.map(async (pet) => {
@@ -96,8 +101,12 @@ class PetsRepository {
     if (!findPets.length) {
       throw new Error('Pets not found');
     }
+
+    const totalPages = Math.ceil(count / limit);
+
     return {
       pets: petsWithImages,
+      totalPages,
     };
   }
 

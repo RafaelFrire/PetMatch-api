@@ -19,7 +19,7 @@ class PetsService {
           .status(ErrorCode.NOT_FOUND)
           .json({ message: "Pet not found" });
       }
-      return pet;
+      return res.status(200).json(pet);
     } catch (err) {
       console.error("Database error:", err);
       return res
@@ -56,6 +56,7 @@ class PetsService {
 
   async getPetsByOngSlug(req: Request, res: Response) {
     const slug = req.params.slug;
+    const limit = Number(req.params.limit) || 10;
 
     if (!slug) {
       return res
@@ -64,7 +65,7 @@ class PetsService {
     }
 
     try {
-      const pet = await this.petRepository.getPetsByOngSlug(slug);
+      const pet = await this.petRepository.getPetsByOngSlug(slug, limit);
 
       if (pet === null) {
         return res
@@ -82,23 +83,22 @@ class PetsService {
   async getPetsByOngId(req: Request, res: Response) {
     try {
       const id = req.params.id;
+      const limit = Number(req.query.limit) || 12;
+      const page = Number(req.query.page) || 1;
+
       if (!id) {
-        return res
-          .status(ErrorCode.BAD_REQUEST)
-          .json({ message: "Invalid id" });
+        return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
       }
 
       const findOng = await prismaClient.ong.findUnique({
         where: { id: id },
       });
 
-      if(!findOng) {
-        return res
-          .status(ErrorCode.NOT_FOUND)
-          .json({ message: "Ong not found" });
+      if (!findOng) {
+        return res.status(ErrorCode.NOT_FOUND).json({ message: "Ong not found" });
       }
-      
-      const pets = await this.petRepository.getPetsByOngId(id);
+
+      const pets = await this.petRepository.getPetsByOngId(id, limit, page);
 
       if (pets === null) {
         return res
@@ -174,7 +174,7 @@ class PetsService {
 
     try {
       const findOng = await prismaClient.ong.findUnique({
-        where: { id: pet.ongId },
+        where: { userId: pet.ongId },
       });
 
       if (!findOng) {

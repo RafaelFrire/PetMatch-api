@@ -50,7 +50,6 @@ class PetsController {
     }
   }
 
-
   async getPets(req: Request, res: Response) {
     try {
       const pets = await this.petsService.getAllPets(req, res);
