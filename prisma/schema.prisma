@@ -84,7 +84,7 @@ model section {
 }
 
 model event {
-  id          Int   @id @default(autoincrement())
+  id        String  @id @default(uuid())
   title       String
   slug       String
   categorie       String
@@ -105,7 +105,7 @@ model event {
 
 
 model Pet {
-  id          Int   @id @default(autoincrement())
+  id        String  @id @default(uuid())
   name         String
   species      String
   breed        String
@@ -128,7 +128,7 @@ model Pet {
 model PetImage {
   id        String   @id @default(uuid())
   url       String
-  petId     Int
+  petId     String
   pet       Pet      @relation("PetImages", fields: [petId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -48,7 +48,7 @@ class EventRepository {
   async updateEvent(id: string, eventData: Partial<EventDto>) {
     return await prismaClient.event.update({
       where: { id },
-      data: eventData,
+      data: { ...eventData, ongId: undefined }, // Exclude ongId from update
     });
   }
 

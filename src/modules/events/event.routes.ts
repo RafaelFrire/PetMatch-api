@@ -19,7 +19,7 @@ router.get("/api/event/:id/id", (req: Request, res: Response) => {
   eventController.getEventById(req, res);
 });
 
-router.patch("/api/event/:id/id", (req: Request, res: Response) => {
+router.patch("/api/event/:id/id", upload, (req: Request, res: Response) => {
   eventController.updateEventById(req, res);
 });
 

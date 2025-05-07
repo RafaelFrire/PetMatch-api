@@ -156,6 +156,11 @@ class EventService {
     const id = req.params.id;
     const updates = req.body;
 
+    const { organizer, ...safeUpdates } = updates;
+
+    console.log("updateEventById called with id:", id);
+    console.log("Updates received:", updates);
+
     if (!id) {
       return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
     }
@@ -163,13 +168,21 @@ class EventService {
     try {
       const event = await this.eventRepository.getEventById(id);
 
+      const findOng = await prismaClient.ong.findUnique({
+        where: { userId: updates.ongId },
+      });
+
       if (!event) {
         return res
           .status(ErrorCode.NOT_FOUND)
           .json({ message: "event not found" });
       }
 
-      const updatedEvent = await this.eventRepository.updateEvent(id, updates);
+      const updatedEvent = await this.eventRepository.updateEvent(id, {
+        ...safeUpdates,
+        date: new Date(updates.date),
+        ongId: findOng?.id,
+      });
 
       return res.status(200).json(updatedEvent);
     } catch (err) {
