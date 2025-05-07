@@ -61,6 +61,17 @@ class PetsController {
     }
   }
 
+  async deletePetById(req: Request, res: Response) {
+    try {
+      const pet = await this.petsService.deletePetById(req, res);
+      return pet;
+    } catch (error) {
+      res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: (error as Error).message });
+    }
+  }
+
   async createPet(req: Request, res: Response, filenames: string[]) {
     try {
       const pet = await this.petsService.createPet(req, res, filenames);

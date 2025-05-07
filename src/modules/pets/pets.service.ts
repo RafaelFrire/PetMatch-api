@@ -147,6 +147,29 @@ class PetsService {
     }
   }
 
+  async deletePetById(req: Request, res: Response) {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
+    }
+    try {
+      const pet = await this.petRepository.getPetById(id);
+      if (!pet) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "pet not found" });
+      }
+
+      await this.petRepository.destroy(id);
+      return res.status(200).json({ message: "pet deleted" });
+    } catch (err) {
+      console.error("Database error:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
+
   async createPet(req: Request, res: Response, filenames: string[]) {
     const pet: PetDto = req.body;
 
@@ -171,11 +194,13 @@ class PetsService {
           .json({ message: `${field} is required` });
       }
     }
-
     try {
-      const findOng = await prismaClient.ong.findUnique({
+      const findOng = await prismaClient.ong.findFirst({
         where: { userId: pet.ongId },
       });
+
+      const status = String(pet?.status) === "true";
+
 
       if (!findOng) {
         return res
@@ -183,7 +208,10 @@ class PetsService {
           .json({ message: "Ong not found" });
       }
 
-      const newPet = await this.petRepository.createPet({ ...pet }, filenames);
+      const newPet = await this.petRepository.createPet(
+        { ...pet, id: undefined, ongId: findOng.id, status: status },
+        filenames
+      );
       return res.status(201).json(newPet);
     } catch (err) {
       console.error("Database error:", err);

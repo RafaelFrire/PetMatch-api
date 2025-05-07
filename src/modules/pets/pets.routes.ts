@@ -27,6 +27,10 @@ router.get("/api/pets/:id/ongId", (req: Request, res: Response) => {
   petsController.getPetsByOngId(req, res);
 });
 
+router.delete("/api/pets/:id/id", (req: Request, res: Response) => {
+  petsController.deletePetById(req, res);
+});
+
 router.post(
   "/api/pets/create",
   // ValidateJwt,

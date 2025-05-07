@@ -3,7 +3,7 @@ import prismaClient from "../../database";
 class PetsRepository {
   async createPet(pet: PetDto, filenames: string[]) {
     const newPetRecord = await prismaClient.pet.create({
-      data: { ...pet },
+      data: { ...pet, }, 
     });
 
     const newImagesRecord = await prismaClient.petImage.createMany({
@@ -123,7 +123,7 @@ class PetsRepository {
     });
   }
 
-  async deletePet(id: string) {
+  async destroy(id: string) {
     return await prismaClient.pet.delete({
       where: { id },
     });
@@ -164,6 +164,8 @@ class PetsRepository {
       totalPages,
     };
   }
+
+
 }
 
 export default PetsRepository;

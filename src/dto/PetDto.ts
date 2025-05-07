@@ -1,5 +1,5 @@
 class PetDto {
-    id: string;
+    id?: string;
     name: string;
     species: string;
     breed: string;
