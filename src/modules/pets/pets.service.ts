@@ -147,6 +147,46 @@ class PetsService {
     }
   }
 
+  async updatePetById(req: Request, res: Response) {
+    const id = req.params.id;
+    const updates = req.body;
+
+    const { organizer, ...safeUpdates } = updates;
+
+    console.log("pet called with id:", id);
+    console.log("Updates received:", updates);
+
+    if (!id) {
+      return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
+    }
+
+    try {
+      const findPet = await this.petRepository.getPetById(id);
+      const status = String(updates?.status) === "true";
+      if (!findPet) {
+        return res
+          .status(ErrorCode.NOT_FOUND)
+          .json({ message: "Pet not found" });
+      }
+
+      const updatedEvent = await this.petRepository.updatePet(id, {
+        ...safeUpdates,
+        birthdate: new Date(updates.birthdate),
+        date: undefined,
+        ongId: findPet.ongId,
+        slug: findPet.slug,
+        status: status,
+      });
+
+      return res.status(200).json(updatedEvent);
+    } catch (err) {
+      console.error("Database error while updating event:", err);
+      return res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: ErrorMessage.INTERNAL_EXCEPTION });
+    }
+  }
+
   async deletePetById(req: Request, res: Response) {
     const id = req.params.id;
     if (!id) {

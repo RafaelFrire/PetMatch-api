@@ -6,6 +6,7 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model user {
   id                      String      @id @default(uuid())
   email                   String      @unique(map: "User_email_key")
@@ -23,17 +24,17 @@ model user {
   ong                     ong?
 }
 
-
 model adopter {
-  id       String @id @default(uuid())
-  document String
-  phone    String
-  address  String
-  zipcode  String
-  state    String
-  city     String
-  userId   String @unique(map: "Adopter_userId_key")
-  user     user   @relation(fields: [userId], references: [id], map: "Adopter_userId_fkey")
+  id              String            @id @default(uuid())
+  document        String
+  phone           String
+  address         String
+  zipcode         String
+  state           String
+  city            String
+  userId          String            @unique(map: "Adopter_userId_key")
+  user            user              @relation(fields: [userId], references: [id], map: "Adopter_userId_fkey")
+  adoptionRequest AdoptionRequest[]
 }
 
 model ong {
@@ -48,19 +49,19 @@ model ong {
   name    String
   slug    String
   article article[]
-  events event[]
-  pets   Pet[]
+  events  event[]
+  pets    Pet[]
   user    user      @relation(fields: [userId], references: [id], map: "Ong_userId_fkey")
 }
 
 model article {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   title     String
   categorie String
   thumbnail String
   banner    String
   createdAt DateTime  @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime  @updatedAt
   ongId     String
   slug      String
   ong       ong       @relation(fields: [ongId], references: [id], map: "Article_ongId_fkey")
@@ -68,7 +69,6 @@ model article {
 
   @@index([ongId], map: "Article_ongId_fkey")
 }
-
 
 model section {
   id        String  @id @default(uuid())
@@ -84,44 +84,45 @@ model section {
 }
 
 model event {
-  id        String  @id @default(uuid())
-  title       String
-  slug       String
-  categorie       String
-  time String
-  location String
-  address String
-  city String
-  state String
-  description String
+  id             String   @id @default(uuid())
+  title          String
+  slug           String
+  categorie      String
+  time           String
+  location       String
+  address        String
+  city           String
+  state          String
+  description    String
   additionalInfo String
-  imageUrl    String
-  date        DateTime
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  ongId       String
-  ong         ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
+  imageUrl       String
+  date           DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ongId          String
+  ong            ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
 }
 
-
 model Pet {
-  id        String  @id @default(uuid())
-  name         String
-  species      String
-  breed        String
-  color        String
-  size         String
-  health       String
-  temperament  String
-  birthdate    DateTime
-  status       Boolean @default(true) // true for available, false for unavailable
-  history      String @db.Text
-  slug         String  @unique
-  ongId       String
-  ong         ong      @relation(fields: [ongId], references: [id], onDelete: Cascade)
-  images       PetImage[] @relation("PetImages")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String            @id @default(uuid())
+  name            String
+  species         String
+  breed           String
+  color           String
+  size            String
+  health          String
+  temperament     String
+  birthdate       DateTime
+  status          Boolean           @default(true) // true for available, false for unavailable
+  history         String            @db.Text
+  slug            String            @unique
+  ongId           String
+  ong             ong               @relation(fields: [ongId], references: [id], onDelete: Cascade)
+  images          PetImage[]        @relation("PetImages")
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  AdoptionRequest AdoptionRequest[]
+
   @@map("pets") // Nome da tabela no banco de dados
 }
 
@@ -132,9 +133,48 @@ model PetImage {
   pet       Pet      @relation("PetImages", fields: [petId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
   @@map("images") // Nome da tabela no banco de dados
 }
 
+model AdoptionRequest {
+  id                String        @id @default(uuid())
+  petId             String        @unique
+  pet               Pet           @relation(fields: [petId], references: [id])
+  adopterId         String        @unique
+  adopter           adopter       @relation(fields: [adopterId], references: [id])
+  status            String        @default("PENDING") // PENDING, APPROVED, REJECTED
+  name              String
+  email             String
+  phone             String
+  cpf               String        @unique
+  maritalStatus     MaritalStatus
+  address           String
+  city              String
+  state             String
+  zipCode           String
+  residenceType     ResidenceType
+  hasOtherPets      Boolean
+  reasonForAdoption String
+  proofOfResidence  String // URL para comprovante (PDF/imagem)
+
+  createdAt DateTime @default(now())
+
+  @@map("adoption_requests")
+}
+
+enum MaritalStatus {
+  SINGLE
+  MARRIED
+  DIVORCED
+  WIDOWED
+}
+
+enum ResidenceType {
+  HOUSE
+  APARTMENT
+  OTHER
+}
 
 enum user_role {
   ADMIN
