@@ -20,7 +20,6 @@ export interface CreateUserInput {
 }
 
 
-
 export interface User {
   id: string;
   email: string;
