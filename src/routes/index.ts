@@ -5,6 +5,7 @@ import petsRouter from "../modules/pets/pets.routes";
 import ongRouter from "../modules/ongs/ong.routes";
 import filesRouter from "../modules/files/files.routes";
 import accountRouter from "../modules/account/account.routes";
+import adoptionRouter from "../modules/adoptionRequest/adoption.routes";
 
 export default [
   authRouter,
@@ -14,4 +15,5 @@ export default [
   ongRouter,
   filesRouter,
   accountRouter,
+  adoptionRouter,
 ];

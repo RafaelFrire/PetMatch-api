@@ -15,6 +15,13 @@ class AdoptionService {
       const { petId, adopterId } = req.params;
       const data: ExtendedUser = req.body;
 
+      console.log("petid", petId)
+      console.log("adopterId", adopterId)
+
+      if(!petId || !adopterId) {
+        return res.status(400).json({ error: "Pet ID and Adopter ID are required" });
+      }
+
       const findPet = await this.petsRepository.getPetById(petId);
 
       const findAdoper = await prismaClient.adopter.findUnique({
@@ -23,10 +30,10 @@ class AdoptionService {
         },
       });
 
-      if (!findPet) {
+      if (findPet === null) {
         return res.status(404).json({ error: "Pet not found" });
       }
-      if (!findAdoper) {
+      if (findAdoper === null) {
         return res.status(404).json({ error: "Adoper not found" });
       }
 
@@ -58,7 +65,10 @@ class AdoptionService {
       );
       return res.status(201).json(newAdoption);
     } catch (err) {
-      return res.status(500).json({ error: "Error creating adoption request" });
+        console.log("Error creating adoption request", err);
+      return res
+        .status(500)
+        .json({ error: "Error creating adoption request", err });
     }
   }
 

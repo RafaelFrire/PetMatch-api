@@ -11,6 +11,18 @@ const adoptionController: AdoptionController = new AdoptionController();
 router.get("/api/account/:id", (req: Request, res: Response) => {
     adoptionController.createAdoptionRequest(req, res);
 });
+router.post(
+  "/api/adoption/:petId/:adopterId",
+//   ValidateJwt,
+  // upload,
+  (req: Request, res: Response) => {
+    adoptionController.createAdoptionRequest(req, res);
+  }
+);
+
+router.get("/api/account/:id", (req: Request, res: Response) => {
+    adoptionController.createAdoptionRequest(req, res);
+});
 
 
 
