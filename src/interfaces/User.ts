@@ -60,3 +60,24 @@ export interface Ong {
   userId: string;
   user: User;
 }
+
+
+enum MaritalStatus {
+  SINGLE = "SINGLE",
+  MARRIED = "MARRIED",
+  DIVORCED = "DIVORCED",
+  WIDOWED = "WIDOWED",
+}
+
+enum ResidenceType {
+  HOUSE = "HOUSE",
+  APARTMENT = "APARTMENT",
+  OTHER = "OTHER",
+}
+export interface ExtendedUser extends User {
+  maritalStatus?: MaritalStatus;
+  proofOfResidence?: string;
+  residenceType?: ResidenceType;
+  hasOtherPets?: boolean;
+  reasonForAdoption?: string;
+}
