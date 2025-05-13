@@ -13,15 +13,15 @@ router.get("/api/account/:id", (req: Request, res: Response) => {
 });
 router.post(
   "/api/adoption/:petId/:adopterId",
-//   ValidateJwt,
-  // upload,
+  //   ValidateJwt,
+  upload,
   (req: Request, res: Response) => {
     adoptionController.createAdoptionRequest(req, res);
   }
 );
 
 router.get("/api/account/:id", (req: Request, res: Response) => {
-    adoptionController.createAdoptionRequest(req, res);
+  adoptionController.createAdoptionRequest(req, res);
 });
 
 

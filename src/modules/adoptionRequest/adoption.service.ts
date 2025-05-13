@@ -13,10 +13,10 @@ class AdoptionService {
   async createAdoptionRequest(req: Request, res: Response) {
     try {
       const { petId, adopterId } = req.params;
-      const data: ExtendedUser = req.body;
+      const data = req.body;
 
-      console.log("petid", petId)
-      console.log("adopterId", adopterId)
+      console.log("data adaoption", req.body.adopter);
+      console.log("data adaoption", req.body);
 
       if(!petId || !adopterId) {
         return res.status(400).json({ error: "Pet ID and Adopter ID are required" });
@@ -24,39 +24,43 @@ class AdoptionService {
 
       const findPet = await this.petsRepository.getPetById(petId);
 
-      const findAdoper = await prismaClient.adopter.findUnique({
+      const findAdopter = await prismaClient.adopter.findUnique({
         where: {
-          userId: adopterId,
+          id: adopterId,
         },
       });
 
       if (findPet === null) {
         return res.status(404).json({ error: "Pet not found" });
       }
-      if (findAdoper === null) {
+      if (findAdopter === null) {
         return res.status(404).json({ error: "Adoper not found" });
       }
+
+      let hasOtherPets = data?.hasOtherPets === true ? true : false;
 
       const formatAdoptionData: AdoptionRequest = {
         petId: petId,
         adopterId: adopterId,
         id: data.id,
         name: data.name,
-        status: data.status,
+        status: data.status || "PENDING",
         createdAt: new Date(),
-        phone: data?.adopter?.phone || "",
-        address: data.adopter?.address || "",
-        state: data.adopter?.state || "",
-        city: data.adopter?.city || "",
+        phone: data?.phone || "",
+        address: data?.address || "",
+        state: data?.state || "",
+        city: data?.city || "",
         email: data.email || "",
-        cpf: data.adopter?.document || "",
+        cpf: data?.document || "",
         maritalStatus: data?.maritalStatus || "SINGLE",
         proofOfResidence: data?.proofOfResidence || "",
-        zipCode: data.adopter?.zipcode || "",
+        zipCode: data?.zipcode || "",
         residenceType: data?.residenceType || "HOUSE",
-        hasOtherPets: data?.hasOtherPets || false,
+        hasOtherPets: hasOtherPets,
         reasonForAdoption: data?.reasonForAdoption || "",
       };
+
+      console.log("formatAdoptionData", formatAdoptionData);
 
       const newAdoption = await this.adoptionRepository.createAdoptionRequest(
         petId,
