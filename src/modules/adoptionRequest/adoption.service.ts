@@ -91,7 +91,7 @@ class AdoptionService {
 
       const findOng = await prismaClient.ong.findUnique({
         where: {
-          id: ongId,
+          userId: ongId,
         },
       });
 
