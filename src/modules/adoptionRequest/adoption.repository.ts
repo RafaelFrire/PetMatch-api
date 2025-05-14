@@ -40,15 +40,39 @@ class AdoptionRepository {
     return allAdoptions;
   }
 
-  async getAllAdoptionsByOngId(ongId: string) {
-    const allAdoptions = await prismaClient.adoptionRequest.findMany({
-      where: {
-        pet: {
-          ongId,
+  async getAllAdoptionsByOngId(ongId: string, page: number, limit: number) {
+    const [adoptions, totalAdoptions] = await Promise.all([
+      prismaClient.adoptionRequest.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        where: {
+          pet: {
+            ongId,
+          },
         },
-      },
-    });
-    return allAdoptions;
+        include: {
+          pet: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prismaClient.adoptionRequest.count({
+        where: {
+          pet: {
+            ongId,
+          },
+        },
+      }),
+    ]);
+
+    const totalPages = Math.ceil(totalAdoptions / limit);
+
+    return {
+      adoptions,
+      totalPages,
+      totalItems: totalAdoptions,
+    };
   }
 
   async getPendencesRequest(ongId: string) {

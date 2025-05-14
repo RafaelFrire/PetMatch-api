@@ -52,7 +52,7 @@ class EventRepository {
     });
   }
 
-  async destroy(id: string){
+  async destroy(id: string) {
     return prismaClient.event.delete({
       where: {
         id,

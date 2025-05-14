@@ -11,6 +11,13 @@ const adoptionController: AdoptionController = new AdoptionController();
 router.get("/api/account/:id", (req: Request, res: Response) => {
     adoptionController.createAdoptionRequest(req, res);
 });
+
+
+router.get("/api/adoptions_request/:ongId", (req: Request, res: Response) => {
+    adoptionController.getAllAdoptionsByOngId(req, res);
+});
+
+
 router.post(
   "/api/adoption/:petId/:adopterId",
   //   ValidateJwt,

@@ -18,8 +18,10 @@ class AdoptionService {
       console.log("data adaoption", req.body.adopter);
       console.log("data adaoption", req.body);
 
-      if(!petId || !adopterId) {
-        return res.status(400).json({ error: "Pet ID and Adopter ID are required" });
+      if (!petId || !adopterId) {
+        return res
+          .status(400)
+          .json({ error: "Pet ID and Adopter ID are required" });
       }
 
       const findPet = await this.petsRepository.getPetById(petId);
@@ -69,7 +71,7 @@ class AdoptionService {
       );
       return res.status(201).json(newAdoption);
     } catch (err) {
-        console.log("Error creating adoption request", err);
+      console.log("Error creating adoption request", err);
       return res
         .status(500)
         .json({ error: "Error creating adoption request", err });
@@ -78,12 +80,33 @@ class AdoptionService {
 
   async getAllAdoptionsByOngId(req: Request, res: Response) {
     try {
-      const { petId, adopterId } = req.params;
-      const data: User = req.body;
+      const page = Number(req.query.page) || (1 as number);
+      const limit = Number(req.query.limit) || (20 as number);
 
-      const findPet = await this.adoptionRepository.getAllAdoptionsByOngId(
-        petId
-      );
+      const { ongId } = req.params;
+
+      if (!ongId) {
+        return res.status(400).json({ message: "Ong ID is required" });
+      }
+
+      const findOng = await prismaClient.ong.findUnique({
+        where: {
+          id: ongId,
+        },
+      });
+
+      if (!findOng) {
+        return res.status(404).json({ message: "Ong not found" });
+      }
+
+      const findAllAdoptionRequests =
+        await this.adoptionRepository.getAllAdoptionsByOngId(
+          ongId,
+          page,
+          limit
+        );
+
+      res.status(200).json(findAllAdoptionRequests);
     } catch (err) {
       return res.status(500).json({ error: "Error creating adoption request" });
     }
