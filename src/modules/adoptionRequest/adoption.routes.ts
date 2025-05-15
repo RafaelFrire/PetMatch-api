@@ -17,6 +17,9 @@ router.get("/api/adoptions_request/:userId", (req: Request, res: Response) => {
     adoptionController.getAllAdoptionsByOngId(req, res);
 });
 
+router.post("/api/adoptions/setAdoptionStatus/:adoptationId", (req: Request, res: Response) => {
+    adoptionController.setAdoptionStatus(req, res);
+});
 
 router.post(
   "/api/adoption/:petId/:adopterId",

@@ -13,6 +13,15 @@ class AdoptionController {
     }
   }
 
+    async setAdoptionStatus(req: Request, res: Response) {
+    try {
+      const adoption = this.adoptionService.setAdoptionStatus(req, res);
+      return adoption;
+    } catch (err) {
+      return res.status(500).json({ error: "Error creating adoption request" });
+    }
+  }
+
   async getAllAdoptionsByOngId(req: Request, res: Response) {
     try {
       const adoption = this.adoptionService.getAllAdoptionsByOngId(req, res);

@@ -134,6 +134,32 @@ class AdoptionService {
     }
   }
 
+  async setAdoptionStatus(req: Request, res: Response) {
+    try {
+      const { adoptationId } = req.params;
+      const status = req.query.status as string || "PENDING";
+
+      console.log("status", status);
+
+      const findAdoptation = await this.adoptionRepository.getAdoptionById(
+        adoptationId
+      );
+
+      if(!findAdoptation) {
+        return res.status(404).json({ error: "Adoption not found" });
+      }
+
+      const setStatusAdoptation = await this.adoptionRepository.setAdoptionStatus(
+        adoptationId,
+        status
+      );
+
+      return res.status(200).json(setStatusAdoptation);
+    } catch (err) {
+      return res.status(500).json({ error: "Error creating adoption request" });
+    }
+  }
+
   async getAdoptionById(req: Request, res: Response) {
     try {
       const { petId, adopterId } = req.params;

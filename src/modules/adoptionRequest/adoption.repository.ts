@@ -41,30 +41,58 @@ class AdoptionRepository {
   }
 
   async getAllAdoptionsByOngId(ongId: string, page: number, limit: number) {
-    const [adoptions, totalAdoptions] = await Promise.all([
-      prismaClient.adoptionRequest.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-        where: {
-          pet: {
-            ongId,
+    const [adoptions, totalAdoptions, totalApproveds, totalRejected, totalPending] =
+      await Promise.all([
+        prismaClient.adoptionRequest.findMany({
+          skip: (page - 1) * limit,
+          take: limit,
+          where: {
+            pet: {
+              ongId,
+            },
           },
-        },
-        include: {
-          pet: true,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-      }),
-      prismaClient.adoptionRequest.count({
-        where: {
-          pet: {
-            ongId,
+          include: {
+            pet: true,
           },
-        },
-      }),
-    ]);
+          orderBy: {
+            createdAt: "desc",
+          },
+        }),
+        prismaClient.adoptionRequest.count({
+          where: {
+            pet: {
+              ongId,
+            },
+          },
+        }),
+
+        prismaClient.adoptionRequest.count({
+          where: {
+            pet: {
+              ongId,
+            },
+            status: "APPROVED",
+          },
+        }),
+
+        prismaClient.adoptionRequest.count({
+          where: {
+            pet: {
+              ongId,
+            },
+            status: "REJECTED",
+          },
+        }),
+
+             prismaClient.adoptionRequest.count({
+          where: {
+            pet: {
+              ongId,
+            },
+            status: "PENDING",
+          },
+        }),
+      ]);
 
     const totalPages = Math.ceil(totalAdoptions / limit);
 
@@ -72,6 +100,9 @@ class AdoptionRepository {
       adoptions,
       totalPages,
       totalItems: totalAdoptions,
+      totalAprovado: totalApproveds,
+      totalReprovado: totalRejected,
+      totalPendente: totalPending,
     };
   }
 
@@ -117,7 +148,7 @@ class AdoptionRepository {
     return deletedAdoption;
   }
 
-  async updateAdoptionRequest(id: string, status: string) {
+  async setAdoptionStatus(id: string, status: string) {
     const updatedAdoption = await prismaClient.adoptionRequest.update({
       where: {
         id,
