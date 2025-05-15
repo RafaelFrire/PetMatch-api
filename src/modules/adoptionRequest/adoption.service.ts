@@ -83,15 +83,15 @@ class AdoptionService {
       const page = Number(req.query.page) || (1 as number);
       const limit = Number(req.query.limit) || (20 as number);
 
-      const { ongId } = req.params;
+      const { userId } = req.params;
 
-      if (!ongId) {
-        return res.status(400).json({ message: "Ong ID is required" });
+      if (!userId) {
+        return res.status(400).json({ message: "user ID is required" });
       }
 
       const findOng = await prismaClient.ong.findUnique({
         where: {
-          userId: ongId,
+          userId: userId,
         },
       });
 
@@ -101,7 +101,7 @@ class AdoptionService {
 
       const findAllAdoptionRequests =
         await this.adoptionRepository.getAllAdoptionsByOngId(
-          ongId,
+          findOng.id,
           page,
           limit
         );

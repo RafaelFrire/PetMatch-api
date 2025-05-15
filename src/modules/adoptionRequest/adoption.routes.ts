@@ -13,7 +13,7 @@ router.get("/api/account/:id", (req: Request, res: Response) => {
 });
 
 
-router.get("/api/adoptions_request/:ongId", (req: Request, res: Response) => {
+router.get("/api/adoptions_request/:userId", (req: Request, res: Response) => {
     adoptionController.getAllAdoptionsByOngId(req, res);
 });
 
