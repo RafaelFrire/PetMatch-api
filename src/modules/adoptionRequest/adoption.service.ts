@@ -170,6 +170,32 @@ class AdoptionService {
       return res.status(500).json({ error: "Error creating adoption request" });
     }
   }
+
+    async destroy(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+
+      if(!id) {
+        return res.status(400).json({ error: "Adoption ID is required" });
+      }
+      
+      const findAdoptation = await this.adoptionRepository.getAdoptionById(id);
+
+      if(!findAdoptation) {
+        return res.status(404).json({ error: "Adoption not found" });
+      }
+
+      await this.adoptionRepository.deleteAdoptionRequest(id);
+
+
+      return res
+        .status(200)
+        .json({ message: `Adoption request deleted ID: ${id}` });
+
+    } catch (err) {
+      return res.status(500).json({ error: "Error creating adoption request" });
+    }
+  }
 }
 
 export default AdoptionService;

@@ -21,6 +21,10 @@ router.post("/api/adoptions/setAdoptionStatus/:adoptationId", (req: Request, res
     adoptionController.setAdoptionStatus(req, res);
 });
 
+router.delete("/api/adoptions/:id/id", (req: Request, res: Response) => {
+  adoptionController.destroy(req, res);
+});
+
 router.post(
   "/api/adoption/:petId/:adopterId",
   //   ValidateJwt,

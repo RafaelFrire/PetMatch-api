@@ -82,23 +82,27 @@ class PetsService {
   }
   async getPetsByOngId(req: Request, res: Response) {
     try {
-      const id = req.params.id;
+      const userId = req.params.id;
       const limit = Number(req.query.limit) || 12;
       const page = Number(req.query.page) || 1;
 
-      if (!id) {
+      if (!userId) {
         return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
       }
 
       const findOng = await prismaClient.ong.findUnique({
-        where: { id: id },
+        where: { userId },
       });
 
       if (!findOng) {
         return res.status(ErrorCode.NOT_FOUND).json({ message: "Ong not found" });
       }
 
-      const pets = await this.petRepository.getPetsByOngId(id, limit, page);
+      const pets = await this.petRepository.getPetsByOngId(
+        findOng.id,
+        limit,
+        page
+      );
 
       if (pets === null) {
         return res

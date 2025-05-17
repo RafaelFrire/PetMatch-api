@@ -13,9 +13,18 @@ class AdoptionController {
     }
   }
 
-    async setAdoptionStatus(req: Request, res: Response) {
+  async setAdoptionStatus(req: Request, res: Response) {
     try {
       const adoption = this.adoptionService.setAdoptionStatus(req, res);
+      return adoption;
+    } catch (err) {
+      return res.status(500).json({ error: "Error creating adoption request" });
+    }
+  }
+
+  async destroy(req: Request, res: Response) {
+    try {
+      const adoption = this.adoptionService.destroy(req, res);
       return adoption;
     } catch (err) {
       return res.status(500).json({ error: "Error creating adoption request" });

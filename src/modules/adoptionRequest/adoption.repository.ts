@@ -140,7 +140,7 @@ class AdoptionRepository {
   }
 
   async deleteAdoptionRequest(id: string) {
-    const deletedAdoption = await prismaClient.adoptionRequest.findUnique({
+    const deletedAdoption = await prismaClient.adoptionRequest.delete({
       where: {
         id,
       },
