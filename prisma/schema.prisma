@@ -139,15 +139,16 @@ model PetImage {
 
 model AdoptionRequest {
   id                String        @id @default(uuid())
-  petId             String        @unique
+  petId             String        
   pet               Pet           @relation(fields: [petId], references: [id])
-  adopterId         String        @unique
+  adopterId         String        
   adopter           adopter       @relation(fields: [adopterId], references: [id])
   status            String        @default("PENDING") // PENDING, APPROVED, REJECTED
   name              String
+  lastname          String
   email             String
   phone             String
-  cpf               String        @unique
+  cpf               String        
   maritalStatus     MaritalStatus
   address           String
   city              String

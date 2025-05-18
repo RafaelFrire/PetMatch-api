@@ -12,6 +12,9 @@ router.get("/api/account/:id", (req: Request, res: Response) => {
     adoptionController.createAdoptionRequest(req, res);
 });
 
+router.get("/api/adoptions/:id/id", (req: Request, res: Response) => {
+  adoptionController.getAdoptionById(req, res);
+});
 
 router.get("/api/adoptions_request/:userId", (req: Request, res: Response) => {
     adoptionController.getAllAdoptionsByOngId(req, res);

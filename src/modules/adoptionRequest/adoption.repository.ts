@@ -135,6 +135,9 @@ class AdoptionRepository {
       where: {
         id,
       },
+      include: {
+        pet: true,
+      },
     });
     return adoption;
   }

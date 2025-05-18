@@ -41,8 +41,8 @@ class AuthController {
 
       const token = jwt.sign(
         { id: findUser.id, email: findUser.email }, // Payload do token
-        auth.secret, // Chave secreta
-        { expiresIn: auth.expires } // Tempo de expiração do token
+        String(auth.secret), // Chave secreta
+        { expiresIn: String(auth.expires) } // Tempo de expiração do token
       );
 
       return res.status(SuccessCode.SUCCESS).json({

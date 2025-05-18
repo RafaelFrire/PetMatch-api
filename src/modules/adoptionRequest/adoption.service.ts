@@ -46,6 +46,7 @@ class AdoptionService {
         adopterId: adopterId,
         id: data.id,
         name: data.name,
+        lastname: data.lastname,
         status: data.status || "PENDING",
         createdAt: new Date(),
         phone: data?.phone || "",
@@ -162,10 +163,19 @@ class AdoptionService {
 
   async getAdoptionById(req: Request, res: Response) {
     try {
-      const { petId, adopterId } = req.params;
-      const data: User = req.body;
+      const { id } = req.params;
 
-      const findPet = await this.petsRepository.getPetById(petId);
+      if(!id){
+        return res.status(400).json({ error: "Adoption ID is required" });
+      }
+
+      const findAdoptation = await this.adoptionRepository.getAdoptionById(id);
+
+      if(!findAdoptation) {
+        return res.status(404).json({ error: "Adoption not found" });
+      }
+
+      return res.status(200).json(findAdoptation);
     } catch (err) {
       return res.status(500).json({ error: "Error creating adoption request" });
     }
