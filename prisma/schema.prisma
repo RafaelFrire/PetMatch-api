@@ -22,6 +22,8 @@ model user {
   status                  user_status
   adopter                 adopter?
   ong                     ong?
+  sentMessages     Message[] @relation("SentMessages")
+  receivedMessages Message[] @relation("ReceivedMessages")
 }
 
 model adopter {
@@ -35,6 +37,8 @@ model adopter {
   userId          String            @unique(map: "Adopter_userId_key")
   user            user              @relation(fields: [userId], references: [id], map: "Adopter_userId_fkey")
   adoptionRequest AdoptionRequest[]
+  chats           Chat[]
+  createdAt       DateTime          @default(now())
 }
 
 model ong {
@@ -52,6 +56,8 @@ model ong {
   events  event[]
   pets    Pet[]
   user    user      @relation(fields: [userId], references: [id], map: "Ong_userId_fkey")
+  chats           Chat[]
+  createdAt       DateTime          @default(now())
 }
 
 model article {
@@ -163,6 +169,34 @@ model AdoptionRequest {
 
   @@map("adoption_requests")
 }
+
+model Chat {
+  id           String     @id @default(uuid())
+  adopterId    String?
+  ongId        String?
+  messages     Message[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  adopter      adopter?   @relation(fields: [adopterId], references: [id])
+  ong          ong?       @relation(fields: [ongId], references: [id])
+}
+
+
+model Message {
+  id          String   @id @default(uuid())
+  subject     String
+  body        String
+  senderId    String
+  receiverId  String
+  createdAt   DateTime @default(now())
+
+  sender      user     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver    user     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  chat      Chat     @relation(fields: [chatId], references: [id])
+  chatId      String
+}
+
 
 enum MaritalStatus {
   SINGLE

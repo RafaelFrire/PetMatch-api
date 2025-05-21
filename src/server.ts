@@ -3,10 +3,15 @@ import {Request, Response, Router } from "express";
 import cors from 'cors'
 import routes from "./routes";
 import ensureUploadsDirectoryExists from "./utils/fileDirectory";
-
+import { createServer } from "http";
+import {initSocket} from "./sockets/index";
 
 const app = express();
 const port = 3333;
+
+const httpServer = createServer(app);
+initSocket(httpServer);
+
 
 const route = Router();
 
@@ -29,7 +34,11 @@ route.get('/', (_:Request, res:Response):any =>{
 app.use("/", route);
 app.use("/", routes);
 
-app.listen(port, () => console.log(`server is running on port ${port}`));
+httpServer.listen(port, () =>
+  console.log(`server is running on port ${port}
+    `)
+);
+
 
 
 export default app;
