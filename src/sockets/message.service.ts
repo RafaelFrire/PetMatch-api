@@ -107,7 +107,25 @@ class MessageService {
     try {
       const { userId } = req.params;
 
-      const chats = await this.messageRepository.getChatsByUserId(userId);
+      const findAdopterUser = await prismaClient.adopter.findUnique({
+        where:{
+          userId,
+        }
+      })
+
+      const findOngUser = await prismaClient.ong.findUnique({
+        where:{
+          userId,
+        }
+      })
+
+      if(!findOngUser && !findAdopterUser){
+        return res.status(404).json({ error: "Ong user not found" });
+      }
+
+      const userIdToSearch = findAdopterUser ? findAdopterUser.id : findOngUser!.id;
+
+      const chats = await this.messageRepository.getChatsByUserId(userIdToSearch);
 
       if (chats.length === 0) {
         return res.status(404).json({ error: "No chats found" });
