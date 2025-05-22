@@ -21,7 +21,6 @@ class OngService {
       }
       return ong;
     } catch (err) {
-      console.error("Database error:", err);
       return res
         .status(ErrorCode.INTERNAL_EXCEPTION)
         .json({ message: ErrorMessage.INTERNAL_EXCEPTION });

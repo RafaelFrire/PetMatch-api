@@ -6,6 +6,7 @@ import ongRouter from "../modules/ongs/ong.routes";
 import filesRouter from "../modules/files/files.routes";
 import accountRouter from "../modules/account/account.routes";
 import adoptionRouter from "../modules/adoptionRequest/adoption.routes";
+import messageRouter from '../sockets/message.Routes'
 
 export default [
   authRouter,
@@ -16,4 +17,5 @@ export default [
   filesRouter,
   accountRouter,
   adoptionRouter,
+  messageRouter
 ];

@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { createServer } from "http";
-import { messageHandler } from "./messageHandler";
+import { messageHandler } from "./message.controller";
 
 export function initSocket(server: ReturnType<typeof createServer>) {
   const io = new Server(server, {

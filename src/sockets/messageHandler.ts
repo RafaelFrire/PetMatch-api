@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { saveMessage } from './messageService';
+import MessageService from './message.Service';
 
 interface MessagePayload {
   senderId: string;
@@ -9,9 +9,11 @@ interface MessagePayload {
 }
 
 export function messageHandler(io: Server, socket: Socket) {
+  const messageService = new MessageService();
+
   socket.on('send_message', async (data: MessagePayload) => {
     try {
-      const savedMessage = await saveMessage(data);
+      const savedMessage = await messageService.saveMessage(data);
       
       // Envia para o destinatário se estiver conectado
       io.to(data.receiverId).emit('receive_message', savedMessage);
