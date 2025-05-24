@@ -1,6 +1,6 @@
 import { Request, Response, response } from "express";
-import MessageService from "./message.Service";
 import ErrorCode from "../constants/errorCode";
+import MessageService from "./message.service";
 
 interface MessagePayload {
   senderId: string;

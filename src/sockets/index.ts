@@ -1,8 +1,9 @@
 import { Server } from "socket.io";
 import { createServer } from "http";
-import { messageHandler } from "./message.controller";
+import { messageHandler } from "./messageHandler";
 
 export function initSocket(server: ReturnType<typeof createServer>) {
+
   const io = new Server(server, {
     cors: {
       origin: "*",
