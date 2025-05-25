@@ -99,7 +99,7 @@ model event {
   address        String
   city           String
   state          String
-  description    String
+  description    String @db.Text
   additionalInfo String
   imageUrl       String
   date           DateTime

@@ -83,12 +83,66 @@ async getOrCreateChat(senderId: string, receiverId: string) {
           OR: [{ adopterId: userId }, { ongId: userId }],
         },
         include: {
-          adopter: true,
-          ong: true,
+          adopter: {
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
+          ong: {
+            select: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
+            },
+          },
         },
       });
 
-    return chats;
+      const lastMessage = await Promise.all(
+        chats.map(async (chat) => {
+          const lastMessage = await prismaClient.message.findFirst({
+            where: {
+              chatId: chat.id,
+            },
+            orderBy: {
+              createdAt: "desc",
+            },
+            select: {
+              subject: true,
+              body: true,
+            },
+          });
+
+          return {
+            ...chat,
+            lastMessage,
+          };
+        }))
+
+      const formattedData = chats.map((chat) => {
+        return(
+          {
+            id: chat.id,
+            adopterId: chat.adopterId,
+            ongId: chat.ongId,
+            createdAt: chat.createdAt,
+            updatedAt: chat.updatedAt,
+            adopterName: chat.adopter?.user.name,
+            ongName: chat.ong?.user.name,
+            lastMessage: lastMessage.find((message) => message.id === chat.id)?.lastMessage,
+          }
+        )
+      })
+
+    return formattedData;
   }
 }
 

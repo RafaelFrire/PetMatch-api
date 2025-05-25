@@ -158,9 +158,6 @@ class EventService {
 
     const { organizer, ...safeUpdates } = updates;
 
-    console.log("updateEventById called with id:", id);
-    console.log("Updates received:", updates);
-
     if (!id) {
       return res.status(ErrorCode.BAD_REQUEST).json({ message: "Invalid id" });
     }
