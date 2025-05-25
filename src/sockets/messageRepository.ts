@@ -67,15 +67,59 @@ async getOrCreateChat(senderId: string, receiverId: string) {
     });
   }
   async getMessages(chatId: string) {
-    return await prismaClient.message.findMany({
+    const chats = await prismaClient.message.findMany({
       where: {
         chatId,
       },
       orderBy: {
         createdAt: "asc",
       },
+      include: {
+        chat: {
+          select: {
+            adopter: {
+              select: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+            ong: {
+              select: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
-  }
+
+    const formattedData = chats.map((chat) => {
+      return {
+        id: chat.id,
+        chatId: chat.chatId,
+        senderId: chat.senderId,
+        receiverId: chat.receiverId,
+        body: chat.body,
+        subject: chat.subject,
+        createdAt: chat.createdAt,
+        adopterId: chat.chat?.adopter?.user,
+        adopterName: chat.chat?.adopter?.user.name,
+        ongId: chat.chat?.ong?.user.id,
+        ongName: chat.chat?.ong?.user.name,
+      };
+    });
+
+    return formattedData;
+  } 
 
   async getChatsByUserId(userId: string) {
       const chats = await prismaClient.chat.findMany({

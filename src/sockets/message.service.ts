@@ -59,7 +59,7 @@ class MessageService {
       }
       const findReceiverUser = await prismaClient.user.findUnique({
         where: {
-          id: senderId,
+          id: receiverId,
         },
       });
 
