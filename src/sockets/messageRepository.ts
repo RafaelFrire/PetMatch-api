@@ -111,7 +111,7 @@ async getOrCreateChat(senderId: string, receiverId: string) {
         body: chat.body,
         subject: chat.subject,
         createdAt: chat.createdAt,
-        adopterId: chat.chat?.adopter?.user,
+        adopterId: chat.chat?.adopter?.user.id,
         adopterName: chat.chat?.adopter?.user.name,
         ongId: chat.chat?.ong?.user.id,
         ongName: chat.chat?.ong?.user.name,
