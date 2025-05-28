@@ -30,6 +30,7 @@ async getOrCreateChat(adopterId: string, ongId: string) {
 
 
   async saveMessage(data: MessagePayload) {
+
     const receiver = await prismaClient.user.findUnique({
       where: {
         id: data.receiverId,
@@ -49,7 +50,6 @@ async getOrCreateChat(adopterId: string, ongId: string) {
       },
     });
   
-
     if (!receiver) {
       throw new Error("ONG não encontrada");
     }
@@ -77,10 +77,6 @@ async getOrCreateChat(adopterId: string, ongId: string) {
         "Não foi possível identificar corretamente quem é o adotante e quem é a ONG."
       );
     }
-
-
-
-
     const chat = await this.getOrCreateChat(adopterId, ongId);
 
     return await prismaClient.message.create({
@@ -199,18 +195,17 @@ async getOrCreateChat(adopterId: string, ongId: string) {
         }))
 
       const formattedData = chats.map((chat) => {
-        return(
-          {
-            id: chat.id,
-            adopterId: chat.adopterId,
-            ongId: chat.ongId,
-            createdAt: chat.createdAt,
-            updatedAt: chat.updatedAt,
-            adopterName: chat.adopter?.user.name,
-            ongName: chat.ong?.user.name,
-            lastMessage: lastMessage.find((message) => message.id === chat.id)?.lastMessage,
-          }
-        )
+        return {
+          id: chat.id,
+          adopterId: chat.adopter?.user.id,
+          ongId: chat.ong?.user.id,
+          createdAt: chat.createdAt,
+          updatedAt: chat.updatedAt,
+          adopterName: chat.adopter?.user.name,
+          ongName: chat.ong?.user.name,
+          lastMessage: lastMessage.find((message) => message.id === chat.id)
+            ?.lastMessage,
+        };
       })
 
     return formattedData;

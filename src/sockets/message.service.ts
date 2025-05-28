@@ -107,25 +107,31 @@ class MessageService {
     try {
       const { userId } = req.params;
 
-      const findAdopterUser = await prismaClient.adopter.findUnique({
-        where:{
-          userId,
-        }
-      })
+     const user = await prismaClient.user.findUnique({
+       where: {
+         id: userId,
+       },
+       include: {
+         ong: true,
+         adopter: true,
+       },
+     });
 
-      const findOngUser = await prismaClient.ong.findUnique({
-        where:{
-          userId,
-        }
-      })
+     if (!user) {
+       return res.status(404).json({ error: "Usuário não encontrado." });
+     }
+      let ownerId: string | undefined;
 
-      if(!findOngUser && !findAdopterUser){
-        return res.status(404).json({ error: "Ong user not found" });
+      if (user.ong) {
+        ownerId = user.ong.id;
+      } else if (user.adopter) {
+        ownerId = user.adopter.id;
+      } else {
+        return res.status(400).json({ error: "Usuário não é uma ONG nem um adotante." });
       }
 
-      const userIdToSearch = findAdopterUser ? findAdopterUser.id : findOngUser!.id;
 
-      const chats = await this.messageRepository.getChatsByUserId(userIdToSearch);
+      const chats = await this.messageRepository.getChatsByUserId(ownerId);
 
       if (chats.length === 0) {
         return res.status(404).json({ error: "No chats found" });
