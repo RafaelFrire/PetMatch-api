@@ -8,53 +8,80 @@ interface MessagePayload {
 }
 
 class MessageRepository {
-async getOrCreateChat(senderId: string, receiverId: string) {
-    // Buscamos chat onde esses dois estão relacionados
-    let chat = await prismaClient.chat.findFirst({
-      where: {
-        OR: [
-          { adopterId: senderId, ongId: receiverId },
-          { adopterId: receiverId, ongId: senderId },
-        ],
+async getOrCreateChat(adopterId: string, ongId: string) {
+  let chat = await prismaClient.chat.findFirst({
+    where: {
+      adopterId,
+      ongId,
+    },
+  });
+
+  if (!chat) {
+    chat = await prismaClient.chat.create({
+      data: {
+        adopterId,
+        ongId,
       },
     });
-
-    if (!chat) {
-      // Criar chat novo, assumindo que senderId é adotante e receiverId é ONG
-      // Você pode adaptar a lógica para verificar quem é adopter e quem é ong
-      chat = await prismaClient.chat.create({
-        data: {
-          adopterId: senderId,
-          ongId: receiverId,
-        },
-      });
-    }
-
-    return chat;
   }
 
+  return chat;
+}
+
+
   async saveMessage(data: MessagePayload) {
-    const findOng = await prismaClient.ong.findUnique({
+    const receiver = await prismaClient.user.findUnique({
       where: {
-        userId: data.receiverId,
+        id: data.receiverId,
+      },
+      include:{
+        ong: true,
+        adopter: true,
+      }
+    });
+    const sender = await prismaClient.user.findUnique({
+      where: {
+        id: data.senderId,
+      },
+      include: {
+        ong: true,
+        adopter: true,
       },
     });
+  
 
-    const findAdopter = await prismaClient.adopter.findUnique({
-      where: {
-        userId: data.senderId,
-      },
-    });
-
-    if (!findOng) {
+    if (!receiver) {
       throw new Error("ONG não encontrada");
     }
 
-    if (!findAdopter) {
+    if (!sender) {
       throw new Error("ADOPTER não encontrada");
     }
 
-    const chat = await this.getOrCreateChat(findAdopter.id, findOng.id);
+    const senderIsAdopter = !!sender.adopter;
+    const senderIsOng = !!sender.ong;
+    const receiverIsAdopter = !!receiver.adopter;
+    const receiverIsOng = !!receiver.ong;
+
+    let adopterId: string | undefined;
+    let ongId: string | undefined;
+
+    if (senderIsAdopter && receiverIsOng) {
+      adopterId = sender.adopter!.id;
+      ongId = receiver.ong!.id;
+    } else if (senderIsOng && receiverIsAdopter) {
+      adopterId = receiver.adopter!.id;
+      ongId = sender.ong!.id;
+    } else {
+      throw new Error(
+        "Não foi possível identificar corretamente quem é o adotante e quem é a ONG."
+      );
+    }
+
+
+
+
+    const chat = await this.getOrCreateChat(adopterId, ongId);
 
     return await prismaClient.message.create({
       data: {
