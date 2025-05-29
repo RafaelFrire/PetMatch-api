@@ -8,16 +8,8 @@ interface MessagePayload {
 }
 
 class MessageRepository {
-async getOrCreateChat(adopterId: string, ongId: string) {
-  let chat = await prismaClient.chat.findFirst({
-    where: {
-      adopterId,
-      ongId,
-    },
-  });
-
-  if (!chat) {
-    chat = await prismaClient.chat.create({
+  async createChat(adopterId: string, ongId: string) {
+    return await prismaClient.chat.create({
       data: {
         adopterId,
         ongId,
@@ -25,20 +17,30 @@ async getOrCreateChat(adopterId: string, ongId: string) {
     });
   }
 
-  return chat;
-}
+  async getOrCreateChat(adopterId: string, ongId: string) {
+    let chat = await prismaClient.chat.findFirst({
+      where: {
+        adopterId,
+        ongId,
+      },
+    });
 
+    if (!chat) {
+      chat = await this.createChat(adopterId, ongId);
+    }
+
+    return chat;
+  }
 
   async saveMessage(data: MessagePayload) {
-
     const receiver = await prismaClient.user.findUnique({
       where: {
         id: data.receiverId,
       },
-      include:{
+      include: {
         ong: true,
         adopter: true,
-      }
+      },
     });
     const sender = await prismaClient.user.findUnique({
       where: {
@@ -49,7 +51,7 @@ async getOrCreateChat(adopterId: string, ongId: string) {
         adopter: true,
       },
     });
-  
+
     if (!receiver) {
       throw new Error("ONG não encontrada");
     }
@@ -142,71 +144,72 @@ async getOrCreateChat(adopterId: string, ongId: string) {
     });
 
     return formattedData;
-  } 
+  }
 
   async getChatsByUserId(userId: string) {
-      const chats = await prismaClient.chat.findMany({
-        where: {
-          OR: [{ adopterId: userId }, { ongId: userId }],
-        },
-        include: {
-          adopter: {
-            select: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-          },
-          ong: {
-            select: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                },
+    const chats = await prismaClient.chat.findMany({
+      where: {
+        OR: [{ adopterId: userId }, { ongId: userId }],
+      },
+      include: {
+        adopter: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
               },
             },
           },
         },
-      });
-
-      const lastMessage = await Promise.all(
-        chats.map(async (chat) => {
-          const lastMessage = await prismaClient.message.findFirst({
-            where: {
-              chatId: chat.id,
+        ong: {
+          select: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+              },
             },
-            orderBy: {
-              createdAt: "desc",
-            },
-            select: {
-              subject: true,
-              body: true,
-            },
-          });
+          },
+        },
+      },
+    });
 
-          return {
-            ...chat,
-            lastMessage,
-          };
-        }))
+    const lastMessage = await Promise.all(
+      chats.map(async (chat) => {
+        const lastMessage = await prismaClient.message.findFirst({
+          where: {
+            chatId: chat.id,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          select: {
+            subject: true,
+            body: true,
+          },
+        });
 
-      const formattedData = chats.map((chat) => {
         return {
-          id: chat.id,
-          adopterId: chat.adopter?.user.id,
-          ongId: chat.ong?.user.id,
-          createdAt: chat.createdAt,
-          updatedAt: chat.updatedAt,
-          adopterName: chat.adopter?.user.name,
-          ongName: chat.ong?.user.name,
-          lastMessage: lastMessage.find((message) => message.id === chat.id)
-            ?.lastMessage,
+          ...chat,
+          lastMessage,
         };
       })
+    );
+
+    const formattedData = chats.map((chat) => {
+      return {
+        id: chat.id,
+        adopterId: chat.adopter?.user.id,
+        ongId: chat.ong?.user.id,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
+        adopterName: chat.adopter?.user.name,
+        ongName: chat.ong?.user.name,
+        lastMessage: lastMessage.find((message) => message.id === chat.id)
+          ?.lastMessage,
+      };
+    });
 
     return formattedData;
   }

@@ -32,6 +32,17 @@ class MessageController {
         .json({ message: (err as Error).message });
     }
   }
+
+  async newConversation(req:Request, res:Response){
+    try{
+
+    }
+    catch (err){
+      res
+        .status(ErrorCode.INTERNAL_EXCEPTION)
+        .json({ message: (err as Error).message });
+    }
+  }
 }
 
 export default MessageController;

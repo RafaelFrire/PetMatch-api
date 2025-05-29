@@ -15,4 +15,9 @@ router.get("/api/messages/chats/user/:userId", (req: Request, res: Response) => 
   messageController.getChatsByUserId(req, res);
 });
 
+
+// new chat
+router.post("/api/messages/chat/user/:userId/", (req: Request, res: Response) => {
+  messageController.getChatsByUserId(req, res);
+});
 export default router;
