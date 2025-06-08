@@ -69,7 +69,6 @@ class AuthController {
   }
   async signUp(req: Request, res: Response, filename?: string) {
     try {
-      console.log(req.body)
       const data: CreateUserInput = req.body as CreateUserInput;
       const adopterData: AdotperDto = req.body as AdotperDto;
       const findUser = await this.authRepository.findByEmail(data.email);
@@ -137,11 +136,30 @@ class AuthController {
         .json({ errorMessage: ErrorMessage.INTERNAL_EXCEPTION });
     }
   }
+  // Utility function to generate a slug from a string
+  private generateSlug(text: string): string {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')           // Replace spaces with -
+      .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+      .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+      .replace(/^-+/, '')             // Trim - from start of text
+      .replace(/-+$/, '');            // Trim - from end of text
+  }
+
   async signUpOng(req: Request, res: Response, filename?: string) {
     try {
       const data: CreateUserInput = req.body;
-      const ongData: OngDto = req.body.ong as OngDto;
+      const ongData: OngDto = req.body as OngDto;
       const findUser = await this.authRepository.findByEmail(data.email);
+
+
+      // Generate a default slug for the ONG using name, lastname, and city
+      const slug = this.generateSlug(
+        `${ongData.name}-${data.lastname}-${ongData.city}-${ongData.state}`
+      );
 
       const filteredData = ExtractType(req.body, [
         "id",
@@ -168,12 +186,13 @@ class AuthController {
             {
               ...filteredData,
               password: encondePassword,
-              status: StatusEnum.ACTIVE,
+              status: StatusEnum.PENDING,
               role: RoleEnum.ONG,
+              documentPath: filename || "",
               password_reset_token: null,
               password_reset_experies: null,
             },
-            ongData
+            { ...ongData, cnpj: data?.document, slug }
           );
 
           return res.status(SuccessCode.CREATED).json({

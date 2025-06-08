@@ -4,6 +4,7 @@ import StatusEnum from "../enums/StatusEnum";
 
 export interface CreateUserInput {
   id: string;
+  document: string;
   email: string;
   password: string;
   name: string;
