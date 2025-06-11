@@ -54,6 +54,8 @@ class AuthController {
           email: findUser.email,
           role: findUser.role,
           status: findUser.status,
+          adopterId: findUser.adopter?.id,
+          ongId: findUser.ong?.id,
         },
         token,
       });

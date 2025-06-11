@@ -2,8 +2,14 @@ import { user } from "@prisma/client";
 import prismaClient from "../../database";
 
 class AuthRepository {
-  async findByEmail(email: string): Promise<user | null> {
-    return prismaClient.user.findFirst({ where: { email } });
+  async findByEmail(email: string) {
+    return prismaClient.user.findFirst({
+      where: { email },
+      include: {
+        adopter: true,
+        ong: true,
+      },
+    });
   }
   async createUser(data: user): Promise<user> {
     return prismaClient.user.create({
@@ -25,7 +31,6 @@ class AuthRepository {
             zipcode: adopter.zipcode,
             state: adopter.state,
             city: adopter.city,
-            
           },
         },
       },
